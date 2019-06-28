@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+<data>
+
+    <record id="delivery_carrier_view_form" model="ir.ui.view">
+        <field name="model">delivery.carrier</field>
+        <field name="inherit_id" ref="delivery_dropoff_site.view_delivery_carrier_form"/>
+        <field name="arch" type="xml">
+            <field name="with_dropoff_site" position="after">
+                <field name="allow_dropoff_site_public_edition"/>
+            </field>
+        </field>
+    </record>
+
+</data>
+</openerp>
