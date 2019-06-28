@@ -12,7 +12,7 @@ from odoo.tools.translate import _
 class CartService(Component):
     _inherit = "shopinvader.cart.service"
 
-    def apply_dropoff_site(self, **params):
+    def set_dropoff_site(self, **params):
         """
             This service will apply the given dropoffsite to the current
             cart
@@ -23,61 +23,23 @@ class CartService(Component):
         if not cart:
             raise UserError(_("There is not cart"))
         else:
-            self._set_dropoff_site(cart, params)
+            self._set_dropoff_site(cart, params["code"])
             return self._to_json(cart)
 
     # Validator
-    def _validator_apply_dropoff_site(self):
-        return {
-            "ref": {"type": "string", "required": True},
-            "name": {"type": "string", "required": True},
-            "street": {"type": "string"},
-            "street2": {"type": "string"},
-            "zip": {"type": "string", "required": True},
-            "city": {"type": "string", "required": True},
-            "phone": {"type": "string"},
-            "state_code": {"type": "string"},
-            "country_code": {"type": "string", "required": True},
-        }
+    def _validator_set_dropoff_site(self):
+        return {"code": {"type": "string", "required": True}}
 
-    def _prepare_dropoff_site_params(self, cart, dropoff_site):
-        country_code = dropoff_site.pop("country_code")
-        state_code = dropoff_site.pop("state_code", None)
-
-        country = self.env["res.country"].search([("code", "=", country_code)])
-        if not country:
-            raise UserError(_("Invalid country code %s") % country_code)
-        dropoff_site["country_id"] = country.id
-
-        if state_code:
-            state = self.env["res.country.state"].search(
-                [("code", "=", state_code), ("country_id", "=", country.id)]
-            )
-            if not state:
-                raise UserError(
-                    _("Invalid state code %s for country %s")
-                    % (state_code, country_code)
-                )
-            dropoff_site["state_id"] = state.id
-
-        if not cart.carrier_id:
-            raise UserError(_("You must select a carrier first"))
-        dropoff_site["carrier_id"] = cart.carrier_id.id
-        return dropoff_site
-
-    def _set_dropoff_site(self, cart, dropoff_site):
-        vals = self._prepare_dropoff_site_params(cart, dropoff_site)
+    def _set_dropoff_site(self, cart, dropoff_site_code):
         dropoff_site_obj = self.env["dropoff.site"]
         dropoff_site = dropoff_site_obj.search(
             [
                 ("carrier_id", "=", cart.carrier_id.id),
-                ("ref", "=", dropoff_site["ref"]),
+                ("ref", "=", dropoff_site_code),
             ]
         )
-        if dropoff_site:
-            dropoff_site.write(vals)
-        else:
-            dropoff_site = dropoff_site_obj.create(vals)
+        if not dropoff_site:
+            raise UserError(_("Invalid code for Dropoff site"))
         vals = {"partner_shipping_id": dropoff_site.partner_id.id}
         if not cart.final_shipping_partner_id:
             vals["final_shipping_partner_id"] = cart.partner_shipping_id.id
