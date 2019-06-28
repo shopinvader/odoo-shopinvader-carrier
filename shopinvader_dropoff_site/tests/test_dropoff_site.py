@@ -3,7 +3,7 @@
 # @author Sébastien BEAU <sebastien.beau@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo.addons.shopinvader_delivery_carrier.tests.test_carrier import (
+from odoo.addons.shopinvader_delivery_carrier.tests.common import (
     CommonCarrierCase,
 )
 
@@ -14,46 +14,32 @@ class DropOffSiteCase(CommonCarrierCase):
         self.final_partner = self.cart.partner_shipping_id
         self.poste_carrier.with_dropoff_site = True
         self._set_carrier(self.poste_carrier)
-        self._set_dropoff_site(ref="foo", name="Bar")
-
-    def _set_dropoff_site(self, ref, name):
-        self.service.dispatch(
-            "apply_dropoff_site",
-            params={
-                "ref": ref,
-                "name": name,
-                "street": u"Boulevard Shopinvader",
-                "zip": u"69004",
-                "city": u"Lyon",
-                "country_code": u"FR",
-            },
+        self.dropoff_site_foo = self.env["dropoff.site"].create(
+            {"ref": "foo", "name": "Foo", "carrier_id": self.poste_carrier.id}
         )
+        self.dropoff_site_bar = self.env["dropoff.site"].create(
+            {"ref": "bar", "name": "Bar", "carrier_id": self.poste_carrier.id}
+        )
+        self._set_dropoff_site("foo")
+
+    def _set_dropoff_site(self, code):
+        self.service.dispatch("set_dropoff_site", params={"code": code})
 
     def test_setting_dropoff_site(self):
         shipping = self.cart.partner_shipping_id
         self.assertEqual(shipping.ref, "foo")
-        self.assertEqual(shipping.name, "Bar")
-        self.assertEqual(
-            self.cart.final_shipping_partner_id, self.final_partner
-        )
-
-    def test_updating_dropoff_site(self):
-        shipping = self.cart.partner_shipping_id
-        self._set_dropoff_site(ref="foo", name="Updated")
-        self.assertEqual(self.cart.partner_shipping_id, shipping)
-        self.assertEqual(shipping.ref, "foo")
-        self.assertEqual(shipping.name, "Updated")
+        self.assertEqual(shipping.name, "Foo")
         self.assertEqual(
             self.cart.final_shipping_partner_id, self.final_partner
         )
 
     def test_changing_dropoff_site(self):
         previous_shipping = self.cart.partner_shipping_id
-        self._set_dropoff_site(ref="foo2", name="Bar2")
+        self._set_dropoff_site("bar")
         self.assertNotEqual(self.cart.partner_shipping_id, previous_shipping)
         shipping = self.cart.partner_shipping_id
-        self.assertEqual(shipping.ref, "foo2")
-        self.assertEqual(shipping.name, "Bar2")
+        self.assertEqual(shipping.ref, "bar")
+        self.assertEqual(shipping.name, "Bar")
         self.assertEqual(
             self.cart.final_shipping_partner_id, self.final_partner
         )
