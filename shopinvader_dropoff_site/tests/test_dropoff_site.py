@@ -23,7 +23,9 @@ class DropOffSiteCase(CommonCarrierCase):
         self._set_dropoff_site("foo")
 
     def _set_dropoff_site(self, code):
-        self.service.dispatch("set_dropoff_site", params={"code": code})
+        self.res_cart = self.service.dispatch(
+            "set_dropoff_site", params={"code": code})['data']
+        self.res_address = self.res_cart['shipping']['address']
 
     def test_setting_dropoff_site(self):
         shipping = self.cart.partner_shipping_id
@@ -32,6 +34,8 @@ class DropOffSiteCase(CommonCarrierCase):
         self.assertEqual(
             self.cart.final_shipping_partner_id, self.final_partner
         )
+        self.assertEqual(self.res_address['is_dropoff_site'], True)
+        self.assertEqual(self.res_address['recipient_name'], 'Osiris')
 
     def test_changing_dropoff_site(self):
         previous_shipping = self.cart.partner_shipping_id
@@ -43,10 +47,15 @@ class DropOffSiteCase(CommonCarrierCase):
         self.assertEqual(
             self.cart.final_shipping_partner_id, self.final_partner
         )
+        self.assertEqual(self.res_address['is_dropoff_site'], True)
+        self.assertEqual(self.res_address['recipient_name'], 'Osiris')
 
     def test_change_carrier(self):
-        self._set_carrier(self.free_carrier)
+        cart = self._set_carrier(self.free_carrier)
+        address = cart['shipping']['address']
         self.assertEqual(self.cart.partner_shipping_id, self.final_partner)
+        self.assertNotIn('is_dropoff_site', address)
+        self.assertNotIn('recipient_name', address)
 
     def test_unset_carrier(self):
         self.service._unset_carrier(self.cart)
