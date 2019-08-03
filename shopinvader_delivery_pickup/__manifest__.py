@@ -5,11 +5,11 @@
 
 {
     "name": "Shopinvader Delivery pickup",
-    "summary": "Shopinvader Delivery pickupt",
+    "summary": "Allows to deliver sale order to pickup site",
     "version": "10.0.0.0.0",
     "category": "e-commerce",
-    "website": "https://akretion.com",
-    "author": "Akretion",
+    "website": "https://github.com/shopinvader/odoo-shopinvader-carrier",
+    "author": "Akretion, ACSONE SA/NV",
     "license": "AGPL-3",
     "application": False,
     "installable": True,
