@@ -3,31 +3,10 @@
 # @author Sébastien BEAU <sebastien.beau@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from openerp.addons.shopinvader_delivery_carrier.tests.common import (
-    CommonCarrierCase,
-)
+from .common import CommondDeliveryPickupCase
 
 
-class TestCart(CommonCarrierCase):
-    def setUp(self):
-        super(TestCart, self).setUp()
-        self.final_partner = self.cart.partner_shipping_id
-        self.poste_carrier.with_pickup_site = True
-        self._set_carrier(self.poste_carrier)
-        self.pickup_site_foo = self.env["dropoff.site"].create(
-            {"ref": "foo", "name": "Foo", "carrier_id": self.poste_carrier.id}
-        )
-        self.pickup_site_bar = self.env["dropoff.site"].create(
-            {"ref": "bar", "name": "Bar", "carrier_id": self.free_carrier.id}
-        )
-        self._set_delivery_pickup(self.pickup_site_foo.id)
-
-    def _set_delivery_pickup(self, pickup_site_id):
-        self.res_cart = self.service.dispatch(
-            "set_delivery_pickup", params={"pickup_site_id": pickup_site_id}
-        )["data"]
-        self.res_address = self.res_cart["shipping"]["address"]
-
+class TestCart(CommondDeliveryPickupCase):
     def test_setting_pickup_site(self):
         shipping = self.cart.partner_shipping_id
         self.assertEqual(shipping.ref, "foo")
@@ -41,7 +20,7 @@ class TestCart(CommonCarrierCase):
 
     def test_changing_pickup_site(self):
         previous_shipping = self.cart.partner_shipping_id
-        self._set_delivery_pickup(self.pickup_site_bar.id)
+        self._cart_set_delivery_pickup(self.pickup_site_bar.id)
         self.assertNotEqual(self.cart.partner_shipping_id, previous_shipping)
         shipping = self.cart.partner_shipping_id
         self.assertEqual(shipping.ref, "bar")
