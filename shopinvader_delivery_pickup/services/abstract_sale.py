@@ -12,8 +12,10 @@ class AbstractSaleService(AbstractComponent):
     def _convert_shipping(self, sale):
         res = super(AbstractSaleService, self)._convert_shipping(sale)
         if sale.partner_shipping_id.is_dropoff_site:
-            res['address'].update({
-                'recipient_name': sale.final_shipping_partner_id.name,
-                'is_dropoff_site': True,
-                })
+            res["address"].update(
+                {
+                    "recipient_name": sale.final_shipping_partner_id.name,
+                    "is_pickup_site": True,
+                }
+            )
         return res
