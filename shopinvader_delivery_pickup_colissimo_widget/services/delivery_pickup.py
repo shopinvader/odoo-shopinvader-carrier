@@ -18,14 +18,14 @@ _logger = logging.getLogger(__name__)
 LAPOSTE_API_ENDPOINT = "https://ws.colissimo.fr/widget-point-retrait/rest/"
 
 
-class CartService(Component):
-    _inherit = "shopinvader.cart.service"
+class DeliveryPickupService(Component):
+    _inherit = "shopinvader.delivery.pickup.service"
 
-    def get_laposte_dropoff_site_token(self):
-        account = self._get_laposte_account()
+    def get_colissimo_pickup_token(self):
+        login, password = self._get_laposte_account()
         response = requests.post(
             LAPOSTE_API_ENDPOINT + "authenticate.rest",
-            json={"login": account.login, "password": account._get_password()},
+            json={"login": login, "password": password},
         )
         if response.status_code == 200:
             return response.json()
@@ -36,12 +36,13 @@ class CartService(Component):
             raise UserError(_("Authentification Error with laposte"))
 
     def _get_laposte_account(self):
-        return (
-            self.env["keychain.account"]
-            .suspend_security()
+        # Note for now we use keychain because the delivery module use it
+        # we will remove it later
+        account = self.env["keychain.account"]\
+            .suspend_security()\
             .retrieve([["namespace", "=", LAPOSTE_KEYCHAIN_NAMESPACE]])
-        )
+        return account.login, account._get_password()
 
     # Validator
-    def _validator_get_laposte_dropoff_site_token(self):
+    def _validator_get_colissimo_pickup_token(self):
         return {}

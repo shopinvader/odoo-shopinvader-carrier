@@ -9,6 +9,8 @@ from odoo.addons.shopinvader.tests.common import CommonCase
 
 class TokenCase(CommonCase):
     def test_get_token(self):
+        account = self.env.ref('delivery_roulier_laposte.keychain_la_poste')
+        account.clear_password = "laposte_token"
         with self.work_on_services() as work:
             with requests_mock.mock() as m:
                 m.post(
@@ -16,6 +18,6 @@ class TokenCase(CommonCase):
                     "/rest/authenticate.rest",
                     json={"token": "laposte_token"},
                 )
-                service = work.component(usage="cart")
-                res = service.dispatch("get_laposte_dropoff_site_token")
+                service = work.component(usage="delivery_pickup")
+                res = service.dispatch("get_colissimo_pickup_token")
                 self.assertEqual(res, {"token": "laposte_token"})
