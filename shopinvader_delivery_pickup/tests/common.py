@@ -23,7 +23,7 @@ class CommondDeliveryPickupCase(CommonCarrierCase):
         )
         self.cart_service = self.service
         self.delivery_pickup_service = self.cart_service.component(
-            usage="delivery_pickup"
+            usage="delivery_pickups"
         )
         self._cart_set_delivery_pickup(self.pickup_site_foo.id)
 

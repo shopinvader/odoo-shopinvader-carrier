@@ -18,6 +18,6 @@ class TokenCase(CommonCase):
                     "/rest/authenticate.rest",
                     json={"token": "laposte_token"},
                 )
-                service = work.component(usage="delivery_pickup")
+                service = work.component(usage="delivery_pickups")
                 res = service.dispatch("get_colissimo_pickup_token")
                 self.assertEqual(res, {"token": "laposte_token"})
