@@ -9,7 +9,7 @@ from openerp.addons.shopinvader_delivery_carrier.tests.common import (
 class TestDeliveryCarrier(CommonCarrierCase):
     def setUp(self):
         super(CommonCarrierCase, self).setUp()
-        self.carrier_service = self.service.component("delivery_carrier")
+        self.carrier_service = self.service.component("delivery_carriers")
         self.poste_carrier.with_dropoff_site = True
         self.pickup_site_foo = self.env["dropoff.site"].create(
             {"ref": "foo", "name": "Foo", "carrier_id": self.poste_carrier.id}
@@ -22,14 +22,14 @@ class TestDeliveryCarrier(CommonCarrierCase):
             "rows": [
                 {
                     "price": 0.0,
-                    "description": False,
+                    "description": None,
                     "id": self.free_carrier.id,
                     "name": self.free_carrier.name,
                     "type": None,
                 },
                 {
                     "price": 0.0,
-                    "description": False,
+                    "description": None,
                     "id": self.poste_carrier.id,
                     "name": self.poste_carrier.name,
                     "type": "pickup",
