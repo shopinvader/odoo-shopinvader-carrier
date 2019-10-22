@@ -15,7 +15,7 @@
     "installable": True,
     "external_dependencies": {"python": [], "bin": []},
     "depends": [
-        "shopinvader_dropoff_site_edition",
+        "shopinvader_delivery_pickup_public_edition",
         "delivery_roulier_laposte",
     ],
     "data": [],

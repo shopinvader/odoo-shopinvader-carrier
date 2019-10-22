@@ -12,7 +12,7 @@ from odoo.tools.translate import _
 class CartService(Component):
     _inherit = "shopinvader.cart.service"
 
-    def set_public_dropoff_site(self, **params):
+    def set_public_delivery_pickup(self, **params):
         """
             This service will create/update apply the given dropoffsite
             to the current cart
@@ -23,12 +23,12 @@ class CartService(Component):
         if not cart:
             raise UserError(_("There is not cart"))
         else:
-            self._add_update_dropoff_site(cart, params)
-            self._set_dropoff_site(cart, params["code"])
+            dropoff_site = self._add_update_dropoff_site(cart, params)
+            self._set_delivery_pickup(cart, dropoff_site.id)
             return self._to_json(cart)
 
     # Validator
-    def _validator_set_public_dropoff_site(self):
+    def _validator_set_public_delivery_pickup(self):
         return {
             "code": {"type": "string", "required": True},
             "name": {"type": "string", "required": True},
@@ -84,3 +84,4 @@ class CartService(Component):
             dropoff_site.write(vals)
         else:
             dropoff_site = dropoff_site_obj.create(vals)
+        return dropoff_site
