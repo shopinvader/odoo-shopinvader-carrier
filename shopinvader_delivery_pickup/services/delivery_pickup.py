@@ -10,7 +10,7 @@ from openerp.osv.expression import FALSE_DOMAIN
 class DeliveryPickupService(Component):
     _inherit = "base.shopinvader.service"
     _name = "shopinvader.delivery.pickup.service"
-    _usage = "delivery_pickup"
+    _usage = "delivery_pickups"
     _description = """
         This service allows you to retrieve the information of available
         pickup sites.
@@ -118,7 +118,7 @@ class DeliveryPickupService(Component):
 
     def _search_param_to_domain(self, **params):
         # first of all, always restrict dropoff site for available carrier
-        available_carriers = self.component(usage="delivery_carrier")._search(
+        available_carriers = self.component(usage="delivery_carriers")._search(
             target=params.get("target")
         )
         carrier_id = params.get("carrier_id")
