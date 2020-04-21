@@ -15,8 +15,8 @@ class DeliveryCarrierService(Component):
         res.append("pickup")
         return res
 
-    def _prepare_carrier(self, carrier):
-        res = super(DeliveryCarrierService, self)._prepare_carrier(carrier)
+    def _prepare_carrier(self, carrier, cart=None):
+        res = super(DeliveryCarrierService, self)._prepare_carrier(carrier, cart)
         if carrier.with_dropoff_site:
             res["type"] = "pickup"
         return res
