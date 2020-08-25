@@ -145,3 +145,10 @@ class DeliveryPickupService(Component):
             ("country_id:country", ["id", "name"]),
             ("carrier_id:carrier", ["id", "name"]),
         ]
+
+
+class DeliveryPickupServiceDeprecated(Component):
+    _inherit = "shopinvader.delivery.pickup.service"
+    _name = "shopinvader.deprecated.delivery.pickup.service"
+    _usage = "delivery_pickup"
+    _description = "Deprecated Service use 'delivery_pickups' instead"
