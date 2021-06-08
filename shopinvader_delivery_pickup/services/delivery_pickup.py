@@ -102,6 +102,19 @@ class DeliveryPickupService(Component):
                     "name": {"type": "string", "required": True},
                 },
             },
+            "attendances": {
+                "type": "list",
+                "nullable": True,
+                "schema": {
+                    "type": "dict",
+                    "schema": {
+                        "id": {"type": "integer", "nullable": True},
+                        "dayofweek": {"type": "string", "nullable": True},
+                        "hour_from": {"type": "number", "nullable": True},
+                        "hour_to": {"type": "number", "nullable": True},
+                    },
+                },
+            },
         }
 
     # Services implementation
@@ -145,3 +158,6 @@ class DeliveryPickupService(Component):
             ("carrier_id:carrier", ["id", "name"]),
             ("attendance_ids:attendances", self._json_parser_attendances()),
         ]
+
+    def _json_parser_attendances(self):
+        return ["id", "hour_from", "hour_to", "dayofweek"]
