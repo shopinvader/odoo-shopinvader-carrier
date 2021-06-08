@@ -10,7 +10,7 @@ from openerp.osv.expression import FALSE_DOMAIN
 class DeliveryPickupService(Component):
     _inherit = "base.shopinvader.service"
     _name = "shopinvader.delivery.pickup.service"
-    _usage = "delivery_pickups"
+    _usage = "delivery_pickup"
     _description = """
         This service allows you to retrieve the information of available
         pickup sites.
@@ -20,7 +20,7 @@ class DeliveryPickupService(Component):
 
     def search(self, **params):
         """
-        Returns the list of available pickup sitecs
+        Returns the list of available pickup sites
 
         If the target params == current_cart, the list will be limited to the
         pickup sites linked to carriers applying to the current cart.
@@ -103,6 +103,19 @@ class DeliveryPickupService(Component):
                     "name": {"type": "string", "required": True},
                 },
             },
+            "attendances": {
+                "type": "list",
+                "nullable": True,
+                "schema": {
+                    "type":  "dict",
+                    "schema": {
+                        "id": {"type": "integer", "nullable": True},
+                        "dayofweek": {"type": "string", "nullable": True},
+                        "hour_from": {"type": "number", "nullable": True},
+                        "hour_to": {"type": "number", "nullable": True},
+                    }
+                }
+            }
         }
 
     # Services implementation
@@ -118,8 +131,8 @@ class DeliveryPickupService(Component):
 
     def _search_param_to_domain(self, **params):
         # first of all, always restrict dropoff site for available carrier
-        available_carriers = self.component(usage="delivery_carriers")._search(
-            target=params.get("target")
+        available_carriers = self.component(usage="delivery_carrier")._search(
+            cart=params.get("target"),
         )
         carrier_id = params.get("carrier_id")
         if carrier_id:
@@ -144,4 +157,13 @@ class DeliveryPickupService(Component):
             ("state_id:state", ["id", "name"]),
             ("country_id:country", ["id", "name"]),
             ("carrier_id:carrier", ["id", "name"]),
+            ("attendance_ids:attendances", self._json_parser_attendances()),
+        ]
+
+    def _json_parser_attendances(self):
+        return [
+            "id",
+            "hour_from",
+            "hour_to",
+            "dayofweek",
         ]
