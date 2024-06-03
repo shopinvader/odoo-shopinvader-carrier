@@ -1,0 +1,54 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* shopinvader_api_delivery_carrier
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 16.0\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: shopinvader_api_delivery_carrier
+#: model:res.groups,name:shopinvader_api_delivery_carrier.shopinvader_delivery_carrier_user_group
+msgid "Delivery Carrier user"
+msgstr ""
+
+#. module: shopinvader_api_delivery_carrier
+#: model:ir.model.fields,field_description:shopinvader_api_delivery_carrier.field_shopinvader_api_delivery_carrier_delivery_carrier_router_helper__partner
+#: model:ir.model.fields,field_description:shopinvader_api_delivery_carrier.field_shopinvader_api_delivery_carrier_delivery_router_helper__partner
+msgid "Partner"
+msgstr ""
+
+#. module: shopinvader_api_delivery_carrier
+#: model:ir.model,name:shopinvader_api_delivery_carrier.model_shopinvader_api_cart_cart_router_helper
+msgid "ShopInvader API Cart Router Helper"
+msgstr ""
+
+#. module: shopinvader_api_delivery_carrier
+#: model:ir.model,name:shopinvader_api_delivery_carrier.model_shopinvader_api_delivery_carrier_delivery_carrier_router_helper
+msgid "ShopInvader API Delivery Carrier Router Helper"
+msgstr ""
+
+#. module: shopinvader_api_delivery_carrier
+#: model:ir.model,name:shopinvader_api_delivery_carrier.model_shopinvader_api_delivery_carrier_delivery_router_helper
+msgid "ShopInvader API Delivery Router Helper"
+msgstr ""
+
+#. module: shopinvader_api_delivery_carrier
+#. odoo-python
+#: code:addons/shopinvader_api_delivery_carrier/routers/cart.py:0
+#, python-format
+msgid "There is no cart"
+msgstr ""
+
+#. module: shopinvader_api_delivery_carrier
+#. odoo-python
+#: code:addons/shopinvader_api_delivery_carrier/routers/cart.py:0
+#, python-format
+msgid "This delivery method is not available for your order"
+msgstr ""
