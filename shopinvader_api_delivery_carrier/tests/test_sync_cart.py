@@ -11,6 +11,7 @@ from odoo.tests.common import tagged
 
 from odoo.addons.shopinvader_api_cart.routers import cart_router
 
+from ..routers import delivery_carrier_cart_router
 from .common import TestShopinvaderDeliveryCarrierCommon
 
 
@@ -33,7 +34,9 @@ class TestSyncCart(TestShopinvaderDeliveryCarrierCommon):
         cls.trans_uuid_1 = str(uuid.uuid4())
 
     def _set_carrier(self, carrier):
-        with self._create_test_client(router=cart_router) as test_client:
+        with self._create_test_client(
+            router=delivery_carrier_cart_router
+        ) as test_client:
             data = {
                 "carrier_id": carrier.id,
             }

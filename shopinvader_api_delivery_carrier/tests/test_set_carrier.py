@@ -8,8 +8,7 @@ from requests import Response
 
 from odoo.tests.common import tagged
 
-from odoo.addons.shopinvader_api_cart.routers import cart_router
-
+from ..routers import delivery_carrier_cart_router
 from .common import TestShopinvaderDeliveryCarrierCommon
 
 
@@ -31,7 +30,9 @@ class TestSetCarrier(TestShopinvaderDeliveryCarrierCommon):
         ]
 
     def test_setting_free_carrier(self):
-        with self._create_test_client(router=cart_router) as test_client:
+        with self._create_test_client(
+            router=delivery_carrier_cart_router
+        ) as test_client:
             data = {
                 "carrier_id": self.free_carrier.id,
             }
@@ -56,7 +57,9 @@ class TestSetCarrier(TestShopinvaderDeliveryCarrierCommon):
         )
 
     def test_setting_poste_carrier(self):
-        with self._create_test_client(router=cart_router) as test_client:
+        with self._create_test_client(
+            router=delivery_carrier_cart_router
+        ) as test_client:
             data = {
                 "carrier_id": self.poste_carrier.id,
             }
