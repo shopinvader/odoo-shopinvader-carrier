@@ -23,9 +23,12 @@ from ..schemas import DeliveryCarrierInput
 delivery_carrier_cart_router = APIRouter(tags=["carts"])
 
 
-@delivery_carrier_cart_router.post("/set_carrier")
-@delivery_carrier_cart_router.post("/{uuid}/set_carrier")
-@delivery_carrier_cart_router.post("/current/set_carrier")
+@delivery_carrier_cart_router.post("/set_carrier", deprecated=True)
+@delivery_carrier_cart_router.post("/{uuid}/set_carrier", deprecated=True)
+@delivery_carrier_cart_router.post("/current/set_carrier", deprecated=True)
+@delivery_carrier_cart_router.post("/carrier")
+@delivery_carrier_cart_router.post("/{uuid}/carrier")
+@delivery_carrier_cart_router.post("/current/carrier")
 def set_carrier(
     env: Annotated[api.Environment, Depends(authenticated_partner_env)],
     partner: Annotated["ResPartner", Depends(authenticated_partner)],
