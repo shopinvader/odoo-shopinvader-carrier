@@ -28,6 +28,7 @@ def search(
     partner: Annotated["ResPartner", Depends(authenticated_partner)],
     paging_: Annotated[Paging, Depends(paging)],
 ) -> PagedCollection[Picking]:
+    """Return all outgoing Deliveries for the authenticated partner."""
     count, pickings = (
         env["shopinvader_api_delivery_carrier.delivery_router.helper"]
         .new({"partner": partner})
