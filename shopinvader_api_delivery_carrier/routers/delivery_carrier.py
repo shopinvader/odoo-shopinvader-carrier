@@ -19,6 +19,7 @@ from ..schemas import (
     DeliveryCarrierSearch,
     DeliveryCarrierWithPrice,
 )
+from .cart import delivery_carrier_cart_router
 
 delivery_carrier_router = APIRouter(tags=["delivery_carriers"])
 
@@ -46,8 +47,10 @@ def search(
     ]
 
 
-@delivery_carrier_router.get("/{uuid}/delivery_carriers")
-@delivery_carrier_router.get("/current/delivery_carriers")
+@delivery_carrier_router.get("/{uuid}/delivery_carriers", deprecated=True)
+@delivery_carrier_router.get("/current/delivery_carriers", deprecated=True)
+@delivery_carrier_cart_router.get("/{uuid}/delivery_carriers")
+@delivery_carrier_cart_router.get("/current/delivery_carriers")
 def search_current(
     data: Annotated[DeliveryCarrierSearch, Depends()],
     env: Annotated[api.Environment, Depends(authenticated_partner_env)],
