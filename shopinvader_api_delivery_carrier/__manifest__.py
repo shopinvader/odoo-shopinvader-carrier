@@ -25,8 +25,6 @@
         "delivery",
         # OCA/delivery-carrier
         "delivery_carrier_info",
-        # OCA/queue
-        "queue_job",
         # OCA/sale-workflow
         "sale_shipping_info_helper",
         "sale_discount_display_amount",
