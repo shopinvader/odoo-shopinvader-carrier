@@ -1,0 +1,1 @@
+from .delivery_colissimo_pickup_token import DeliveryColissimoPickupToken
