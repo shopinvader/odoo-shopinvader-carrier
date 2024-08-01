@@ -41,6 +41,12 @@ class TestSetCarrier(TestShopinvaderDeliveryCarrierCommon):
             )
         self.assertEqual(response.status_code, 200)
         info = response.json()
+
+        # Ensure that delivery line is not visible in the cart
+        delivery_line = self.cart.order_line.filtered("is_delivery")
+        for line in info["lines"]:
+            self.assertNotEqual(line["id"], delivery_line.id)
+
         self.assertEqual(info["delivery"]["amount"]["total"], 0)
         self.assertEqual(
             info["delivery"]["selected_carrier"]["description"],
