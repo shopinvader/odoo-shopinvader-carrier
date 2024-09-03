@@ -49,8 +49,8 @@ class ShopinvaderApiDeliveryColissimoRouterHelper(models.AbstractModel):
     _description = "ShopInvader API Delivery Pickup Colissimo Router Helper"
 
     def _get_laposte_account(self):
-        login = self.env["ir.config_parameter"].get_param("laposte.user")
-        password = self.env["ir.config_parameter"].get_param("laposte.password")
+        login = self.env["ir.config_parameter"].sudo().get_param("laposte.user")
+        password = self.env["ir.config_parameter"].sudo().get_param("laposte.password")
         if not login or not password:
             raise UserError(
                 _(
