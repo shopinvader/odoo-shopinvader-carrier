@@ -9,6 +9,7 @@
     "category": "e-commerce",
     "website": "https://github.com/shopinvader/odoo-shopinvader-carrier",
     "author": "Akretion, ACSONE SA/NV, Shopinvader",
+    "development_status": "Alpha",
     "license": "AGPL-3",
     "application": False,
     "installable": True,
