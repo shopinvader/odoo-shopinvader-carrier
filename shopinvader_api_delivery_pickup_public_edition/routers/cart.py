@@ -38,7 +38,7 @@ def set_public_delivery_pickup(
         "shopinvader_api_cart.cart_router.helper"
     ]._add_update_dropoff_site(cart, data)
     env["shopinvader_api_cart.cart_router.helper"]._set_delivery_pickup(
-        cart, dropoff_site
+        cart, dropoff_site.id
     )
     return Sale.from_sale_order(cart) if cart else None
 
