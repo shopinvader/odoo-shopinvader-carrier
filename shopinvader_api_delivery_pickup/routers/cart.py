@@ -36,7 +36,9 @@ def set_delivery_pickup(
     cart = env["sale.order"]._find_open_cart(partner.id, uuid)
     if not cart:
         raise UserError(_("There is no cart"))
-    env["shopinvader_api_cart.cart_router.helper"]._set_delivery_pickup(cart, data)
+    env["shopinvader_api_cart.cart_router.helper"]._set_delivery_pickup(
+        cart, data.pickup_site_id
+    )
     return Sale.from_sale_order(cart) if cart else None
 
 
@@ -45,10 +47,8 @@ class ShopinvaderApiCartRouterHelper(models.AbstractModel):
 
     # Set delivery pickup
     @api.model
-    def _set_delivery_pickup(self, cart, data):
-        pickup_site = self.env["dropoff.site"].search(
-            [("id", "=", data.pickup_site_id)]
-        )
+    def _set_delivery_pickup(self, cart, pickup_site_id):
+        pickup_site = self.env["dropoff.site"].search([("id", "=", pickup_site_id)])
         if not pickup_site:
             raise UserError(_("Invalid code for pickup site"))
         if pickup_site.carrier_id not in cart.shopinvader_available_carrier_ids:
