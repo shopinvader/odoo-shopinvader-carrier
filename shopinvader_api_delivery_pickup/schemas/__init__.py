@@ -5,4 +5,7 @@ from .delivery_pickup import (
     DeliveryPickupSearch,
 )
 from .address import DeliveryAddress
-from .delivery_carrier import DeliveryCarrierWithPrice
+from .delivery_carrier import (
+    DeliveryCarrierWithPrice,
+    DeliveryCarrier,
+)
