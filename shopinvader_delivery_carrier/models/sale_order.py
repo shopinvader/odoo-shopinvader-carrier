@@ -19,15 +19,6 @@ class SaleOrder(models.Model):
             order.shopinvader_available_carrier_ids = order._available_carriers()
 
     def _available_carriers(self):
-        carriers = self.env["delivery.carrier"].search(
-            [
-                "|",
-                ("company_id", "=", False),
-                ("company_id", "=", self.company_id.id),
-            ]
-        )
-        return (
-            carriers.available_carriers(self.partner_shipping_id)
-            if self.partner_id
-            else carriers
-        )
+        self.ensure_one()
+        wizard = self.env["choose.delivery.carrier"].new({"order_id": self.id})
+        return wizard.available_carrier_ids._origin
