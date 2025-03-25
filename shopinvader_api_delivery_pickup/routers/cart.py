@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 from typing import Annotated
 
-from fastapi import Depends
+from fastapi import APIRouter, Depends
 
 from odoo import _, api, models
 from odoo.exceptions import UserError
@@ -14,16 +14,17 @@ from odoo.addons.fastapi.dependencies import (
     authenticated_partner_env,
 )
 from odoo.addons.sale.models.sale_order import SaleOrder
-from odoo.addons.shopinvader_api_cart.routers import cart_router
 from odoo.addons.shopinvader_api_cart.schemas import CartTransaction
 from odoo.addons.shopinvader_schema_sale.schemas import Sale
 
 from ..schemas import DeliveryPickupInput
 
+delivery_pickup_cart_router = APIRouter(tags=["carts"])
 
-@cart_router.post("/set_pickup")
-@cart_router.post("/{uuid}/set_pickup")
-@cart_router.post("/current/set_pickup")
+
+@delivery_pickup_cart_router.post("/set_pickup")
+@delivery_pickup_cart_router.post("/{uuid}/set_pickup")
+@delivery_pickup_cart_router.post("/current/set_pickup")
 def set_delivery_pickup(
     env: Annotated[api.Environment, Depends(authenticated_partner_env)],
     partner: Annotated["ResPartner", Depends(authenticated_partner)],
