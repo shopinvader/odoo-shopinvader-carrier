@@ -2,12 +2,66 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from datetime import datetime
+from enum import Enum
+from typing import Annotated
 
 from extendable_pydantic import StrictExtendableBaseModel
 from pydantic import Field
 
+from odoo import api
+
 from ..schemas import DeliveryCarrier
 
+class PickingState(str, Enum):
+    """Enum for picking states."""
+
+    draft = "draft"
+    waiting = "waiting"
+    confirmed = "confirmed"
+    assigned = "assigned"
+    done = "done"
+    cancel = "cancel"
+
+
+class PickingSearch(StrictExtendableBaseModel):
+    state: Annotated[
+        PickingState | None,
+        Field(
+            description="State of the picking. If not provided, all states are returned.",
+        ),
+    ] = None
+    tracking_reference: Annotated[
+        str | None,
+        Field(
+            description="Tracking reference of the picking. If not provided, "
+            "all references are returned.",
+        ),
+    ] = None
+    carrier_id: Annotated[
+        int | None,
+        Field(
+            description="ID of the carrier. If not provided, all carriers are returned.",
+        ),
+    ] = None
+    sale_id: Annotated[
+        int | None,
+        Field(
+            description="ID of the sale order. If not provided, all sales are returned.",
+        ),
+    ] = None
+
+    def to_odoo_domain(self, env: api.Environment):
+        domain = []
+
+        if self.state:
+            domain.append(("state", "=", self.state.value))
+        if self.tracking_reference:
+            domain.append(("carrier_tracking_ref", "=", self.tracking_reference))
+        if self.carrier_id:
+            domain.append(("carrier_id", "=", self.carrier_id))
+        if self.sale_id:
+            domain.append(("sale_id", "=", self.sale_id))
+        return domain
 
 class Picking(StrictExtendableBaseModel):
     delivery_id: int
