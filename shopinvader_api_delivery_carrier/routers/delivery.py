@@ -17,22 +17,23 @@ from odoo.addons.fastapi.schemas import Paging
 from odoo.addons.shopinvader_filtered_model.utils import FilteredModelAdapter
 from odoo.addons.stock.models.stock_picking import Picking as StockPicking
 
-from ..schemas import Picking
+from ..schemas import Picking, PickingSearch
 
 delivery_router = APIRouter(tags=["deliveries"])
 
 
 @delivery_router.get("/deliveries")
 def search(
+    params: Annotated[PickingSearch, Depends()],
     env: Annotated[api.Environment, Depends(authenticated_partner_env)],
     partner: Annotated["ResPartner", Depends(authenticated_partner)],
-    paging_: Annotated[Paging, Depends(paging)],
+    paging: Annotated[Paging, Depends(paging)],
 ) -> PagedCollection[Picking]:
     """Return all outgoing Deliveries for the authenticated partner."""
     count, pickings = (
         env["shopinvader_api_delivery_carrier.delivery_router.helper"]
         .new({"partner": partner})
-        ._search(paging_)
+        ._search(paging, params)
     )
     return PagedCollection[Picking](
         count=count, items=[Picking.from_picking(picking) for picking in pickings]
@@ -58,9 +59,9 @@ class ShopinvaderApiDeliveryRouterHelper(models.AbstractModel):
     def model_adapter(self) -> FilteredModelAdapter[StockPicking]:
         return FilteredModelAdapter[StockPicking](self.env, self._get_domain_adapter())
 
-    def _search(self, paging) -> tuple[int, StockPicking]:
+    def _search(self, paging, params) -> tuple[int, StockPicking]:
         return self.model_adapter.search_with_count(
-            [],
+            domain=params.to_odoo_domain(self.env),
             limit=paging.limit,
             offset=paging.offset,
         )
