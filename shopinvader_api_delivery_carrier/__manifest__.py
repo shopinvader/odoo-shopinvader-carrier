@@ -12,7 +12,7 @@
     "author": "Akretion, Acsone SA/NV,Shopinvader",
     "development_status": "Alpha",
     "license": "AGPL-3",
-    "application": True,
+    "application": False,
     "installable": True,
     "external_dependencies": {
         "python": [
