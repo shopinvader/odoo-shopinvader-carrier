@@ -5,10 +5,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
-
 from odoo import _, api, models
-from odoo.exceptions import UserError
-
 from odoo.addons.base.models.res_partner import Partner as ResPartner
 from odoo.addons.fastapi.dependencies import (
     authenticated_partner,
@@ -17,6 +14,7 @@ from odoo.addons.fastapi.dependencies import (
 from odoo.addons.sale.models.sale_order import SaleOrder
 from odoo.addons.shopinvader_api_cart.schemas import CartTransaction
 from odoo.addons.shopinvader_schema_sale.schemas import Sale
+from odoo.exceptions import UserError
 
 from ..schemas import DeliveryCarrierInput
 

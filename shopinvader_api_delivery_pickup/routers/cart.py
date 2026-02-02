@@ -1,4 +1,5 @@
 # Copyright 2019 Akretion (http://www.akretion.com).
+# @author Florian Mounier <florian.mounier@akretion.com>
 # @author Sébastien BEAU <sebastien.beau@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 from typing import Annotated
@@ -37,9 +38,7 @@ def set_delivery_pickup(
     cart = env["sale.order"]._find_open_cart(partner.id, uuid)
     if not cart:
         raise UserError(_("There is no cart"))
-    env["shopinvader_api_cart.cart_router.helper"]._set_delivery_pickup(
-        cart, data.pickup_site_id
-    )
+    env["shopinvader_api_cart.cart_router.helper"]._set_delivery_pickup(cart, data)
     return Sale.from_sale_order(cart) if cart else None
 
 
@@ -48,8 +47,11 @@ class ShopinvaderApiCartRouterHelper(models.AbstractModel):
 
     # Set delivery pickup
     @api.model
-    def _set_delivery_pickup(self, cart, pickup_site_id):
-        pickup_site = self.env["dropoff.site"].search([("id", "=", pickup_site_id)])
+    def _set_delivery_pickup(self, cart, data):
+        pickup_site = self.env["dropoff.site"].search(
+            [("carrier_id", "=", data.carrier_id), ("code", "=", data.code)],
+            limit=1,
+        )
         if not pickup_site:
             raise UserError(_("Invalid code for pickup site"))
         if pickup_site.carrier_id not in cart.shopinvader_available_carrier_ids:
