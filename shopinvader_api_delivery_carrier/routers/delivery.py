@@ -46,10 +46,11 @@ class ShopinvaderApiDeliveryRouterHelper(models.AbstractModel):
 
     partner = fields.Many2one("res.partner")
 
+    def _get_picking_sale_domain(self):
+        return [("typology", "=", "sale"), ("partner_id", "=", self.partner.id)]
+
     def _get_domain_adapter(self):
-        sales = self.env["sale.order"].search(
-            [("typology", "=", "sale"), ("partner_id", "=", self.partner.id)]
-        )
+        sales = self.env["sale.order"].search(self._get_picking_sale_domain())
         return [
             ("sale_id", "in", sales.ids),
             ("picking_type_id.code", "=", "outgoing"),

@@ -9,8 +9,10 @@ from extendable_pydantic import StrictExtendableBaseModel
 from pydantic import Field
 
 from odoo import api
+from odoo.tools.float_utils import json_float_round
 
 from ..schemas import DeliveryCarrier
+
 
 class PickingState(str, Enum):
     """Enum for picking states."""
@@ -24,6 +26,12 @@ class PickingState(str, Enum):
 
 
 class PickingSearch(StrictExtendableBaseModel):
+    name: Annotated[
+        str | None,
+        Field(
+            description="Name of the picking. If not provided, all names are returned.",
+        ),
+    ] = None
     state: Annotated[
         PickingState | None,
         Field(
@@ -53,6 +61,8 @@ class PickingSearch(StrictExtendableBaseModel):
     def to_odoo_domain(self, env: api.Environment):
         domain = []
 
+        if self.name:
+            domain.append(("name", "=", self.name))
         if self.state:
             domain.append(("state", "=", self.state.value))
         if self.tracking_reference:
@@ -63,15 +73,44 @@ class PickingSearch(StrictExtendableBaseModel):
             domain.append(("sale_id", "=", self.sale_id))
         return domain
 
+
+class PickingLine(StrictExtendableBaseModel):
+    product_id: int
+    product_name: str
+    state: str
+    qty: float
+    qty_done: float
+
+    @classmethod
+    def from_picking_line(cls, odoo_rec):
+        return cls.model_construct(
+            product_id=odoo_rec.product_id.id,
+            product_name=odoo_rec.product_id.name,
+            state=odoo_rec.state,
+            qty=json_float_round(
+                odoo_rec.product_uom_qty,
+                precision_digits=len(str(odoo_rec.product_uom.rounding).split(".")[1]),
+            ),
+            qty_done=json_float_round(
+                odoo_rec.quantity_done,
+                precision_digits=len(str(odoo_rec.product_uom.rounding).split(".")[1]),
+            ),
+        )
+
+
 class Picking(StrictExtendableBaseModel):
     delivery_id: int
     name: str
+    state: PickingState
     tracking_reference: str | None = None
+    tracking_url: str | None = None
     delivery_date: datetime | None = Field(
         None, description="Date done or Scheduled Date"
     )
     carrier: DeliveryCarrier | None = None
     sale_id: int | None = None
+
+    lines: list[PickingLine]
 
     @classmethod
     def from_picking(cls, odoo_rec):
@@ -83,10 +122,13 @@ class Picking(StrictExtendableBaseModel):
         return cls.model_construct(
             delivery_id=odoo_rec.id,
             name=odoo_rec.name,
+            state=odoo_rec.state,
             tracking_reference=odoo_rec.carrier_tracking_ref or None,
+            tracking_url=odoo_rec.carrier_tracking_url or None,
             delivery_date=delivery_date,
             carrier=DeliveryCarrier.from_delivery_carrier(odoo_rec.carrier_id)
             if odoo_rec.carrier_id
             else None,
             sale_id=odoo_rec.sale_id.id or None,
+            lines=[PickingLine.from_picking_line(line) for line in odoo_rec.move_ids],
         )
