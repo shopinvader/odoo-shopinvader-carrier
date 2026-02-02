@@ -1,11 +1,13 @@
 # Copyright 2019 ACSONE SA/NV
+# Copyright 2025 Akretion (http://www.akretion.com).
+# @author Florian Mounier <florian.mounier@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+from math import sqrt
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 
 from odoo import api, models
-from odoo.osv import expression
 
 from odoo.addons.base.models.res_partner import Partner as ResPartner
 from odoo.addons.delivery_dropoff_site.models.dropoff_site import DropoffSite
@@ -14,7 +16,7 @@ from odoo.addons.fastapi.dependencies import (
     authenticated_partner_env,
 )
 
-from ..schemas import DeliveryPickup as DeliveryPickupSchema, DeliveryPickupSearch
+from ..schemas import DeliveryPickup, DeliveryPickupSearch
 from .cart import delivery_pickup_cart_router
 
 delivery_pickup_router = APIRouter(tags=["delivery_pickups"])
@@ -25,7 +27,7 @@ def search(
     data: Annotated[DeliveryPickupSearch, Depends()],
     env: Annotated[api.Environment, Depends(authenticated_partner_env)],
     partner: Annotated[ResPartner, Depends(authenticated_partner)],
-) -> list[DeliveryPickupSchema]:
+) -> list[DeliveryPickup]:
     """
     Returns the list of all available pickup sites.
 
@@ -42,7 +44,7 @@ def search(
         ._search(data, None)
     )
     return [
-        DeliveryPickupSchema.from_delivery_pickup(delivery_pickup)
+        DeliveryPickup.from_delivery_pickup(delivery_pickup)
         for delivery_pickup in delivery_pickups
     ]
 
@@ -54,7 +56,7 @@ def search_current(
     env: Annotated[api.Environment, Depends(authenticated_partner_env)],
     partner: Annotated[ResPartner, Depends(authenticated_partner)],
     uuid: str | None = None,
-) -> list[DeliveryPickupSchema]:
+) -> list[DeliveryPickup]:
     """
     Returns the list of available pickup sites.
 
@@ -78,7 +80,7 @@ def search_current(
         ._search(data, cart)
     )
     return [
-        DeliveryPickupSchema.from_delivery_pickup(delivery_pickup)
+        DeliveryPickup.from_delivery_pickup(delivery_pickup)
         for delivery_pickup in delivery_pickups
     ]
 
@@ -88,12 +90,11 @@ class ShopinvaderApiDeliveryRouterHelper(models.AbstractModel):
     _inherit = "shopinvader_api_delivery_carrier.delivery_carrier_router.helper"
     _description = "ShopInvader API Delivery Pickup Router Helper"
 
-    def _search(self, data, cart=None) -> DropoffSite:
+    def _search(self, data, cart=None, limit=10) -> DropoffSite:
         """
         Search for delivery pickup sites
         :return: a list of dropoff.site
         """
-        domain = data.to_odoo_domain(self.env)
         if cart:
             delivery_carriers = self._available_carriers(cart)
         else:
@@ -102,10 +103,30 @@ class ShopinvaderApiDeliveryRouterHelper(models.AbstractModel):
         delivery_carriers = delivery_carriers.filtered(
             lambda carrier: carrier.with_dropoff_site
         )
-        domain = expression.AND(
-            [
-                domain,
-                [("carrier_id", "in", delivery_carriers.ids)],
-            ]
-        )
-        return self.env["dropoff.site"].search(domain)
+
+        domain = [
+            ("carrier_id", "in", delivery_carriers.ids),
+            ("partner_latitude", "!=", 0),
+            ("partner_longitude", "!=", 0),
+        ]
+
+        dropoff_sites = self.env["dropoff.site"].search(domain)
+
+        if dropoff_sites:
+            # TODO: Order by in db
+            res = self.env["res.partner"]._geo_localize(
+                data.street, data.zip, data.city, "", data.country
+            )
+            if not res:
+                return self.env["dropoff.site"]
+
+            lat, lng = res
+
+            dropoff_sites = dropoff_sites.sorted(
+                lambda site: sqrt(
+                    (site.partner_latitude - lat) ** 2
+                    + (site.partner_longitude - lng) ** 2
+                )
+            )[:limit]
+
+        return dropoff_sites

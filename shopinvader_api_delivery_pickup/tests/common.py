@@ -29,7 +29,7 @@ class TestShopinvaderDeliveryPickupCommon(TestShopinvaderDeliveryCarrierCommon):
             {"ref": "bar", "name": "Bar", "carrier_id": cls.free_carrier.id}
         )
         cls.cart.partner_shipping_id = cls.pickup_site_foo.partner_id.id
-        cls.cart.onchange_partner_shipping_id()
+        cls.cart._onchange_partner_shipping_id()
         cls.final_partner = cls.cart.partner_shipping_id
 
     def _set_carrier(self, carrier_id):
