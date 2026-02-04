@@ -1,1 +1,4 @@
 httpx  # For FastAPI tests
+
+odoo-addon-shopinvader_api_delivery_carrier @ git+https://github.com/shopinvader/odoo-shopinvader-carrier.git@refs/pull/18/head#subdirectory=setup/shopinvader_api_delivery_carrier
+odoo-addon-shopinvader_api_delivery_pickup @ git+https://github.com/shopinvader/odoo-shopinvader-carrier.git@refs/pull/18/head#subdirectory=setup/shopinvader_api_delivery_pickup
