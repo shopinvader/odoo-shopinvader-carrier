@@ -9,6 +9,7 @@
     "category": "e-commerce",
     "website": "https://github.com/shopinvader/odoo-shopinvader-carrier",
     "author": "Shopinvader, Akretion",
+    "development_status": "Alpha",
     "license": "AGPL-3",
     "installable": True,
     "external_dependencies": {"python": ["roulier"]},

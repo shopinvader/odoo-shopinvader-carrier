@@ -50,19 +50,42 @@ class DeliveryCarrier(models.Model):
             _logger.warning("CarrierError: %s", exc_info=True)
             return []
 
+        sites = self.env["dropoff.site"]
+
         for site in ret.get("sites", []):
-            site["carrier_id"] = self.id
-            site["country_id"] = (
-                self.env["res.country"].search([("code", "=", site["country"])]).id
+            code = f"roulier_{site['id']}"
+            if site.get("zone"):
+                code += f"__{site['zone']}"
+
+            sites |= self.env["dropoff.site"].new(
+                {
+                    "code": code,
+                    "name": site["name"],
+                    "street": site["street"],
+                    "zip": site["zip"],
+                    "city": site["city"],
+                    "country_id": self.env["res.country"]
+                    .search([("code", "=", site["country"])])
+                    .id,
+                    "carrier_id": self.id,
+                    "partner_latitude": site.get("lat"),
+                    "partner_longitude": site.get("lng"),
+                }
             )
-        return ret.get("sites", [])
+
+        return sites
 
     def _roulier_upsert_pickup_site(self, get):
         self.ensure_one()
         if not self._is_roulier():
             raise UserError(_("Carrier %s is not a Roulier carrier") % self.name)
+        code = get["code"]
+        if "__" in get["code"]:
+            # If the code contains a zone, we need to split it to get the
+            # pickup site id.
+            get["code"], get["zone"] = get["code"].split("__")
 
-        get["id"] = get.pop("code", None)
+        get["id"] = get["code"].replace("roulier_", "")
         payload = {
             **self._roulier_get_base_payload(),
             "get": get,
@@ -75,7 +98,7 @@ class DeliveryCarrier(models.Model):
             raise UserError(_("Invalid pickup site"))
 
         vals = {
-            "code": site["id"],
+            "code": code,
             "name": site["name"],
             "street": site["street"],
             "zip": site["zip"],
@@ -84,9 +107,11 @@ class DeliveryCarrier(models.Model):
             .search([("code", "=", site["country"])])
             .id,
             "carrier_id": self.id,
+            "partner_latitude": site.get("lat"),
+            "partner_longitude": site.get("lng"),
         }
         pickup_site = self.env["dropoff.site"].search(
-            [("code", "=", get["id"]), ("carrier_id", "=", self.id)], limit=1
+            [("code", "=", code), ("carrier_id", "=", self.id)], limit=1
         )
         if pickup_site:
             pickup_site.sudo().write(vals)
