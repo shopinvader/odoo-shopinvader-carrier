@@ -98,7 +98,11 @@ class ShopinvaderApiDeliveryRouterHelper(models.AbstractModel):
         if cart:
             delivery_carriers = self._available_carriers(cart)
         else:
-            delivery_carriers = self.env["delivery.carrier"].search([])
+            delivery_carriers = (
+                self.env["delivery.carrier"].search([])
+                if not data.carrier_id
+                else self.env["delivery.carrier"].browse(data.carrier_id)
+            )
 
         delivery_carriers = delivery_carriers.filtered(
             lambda carrier: carrier.with_dropoff_site

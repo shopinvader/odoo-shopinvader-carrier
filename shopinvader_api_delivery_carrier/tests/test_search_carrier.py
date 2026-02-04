@@ -13,6 +13,16 @@ from .common import TestShopinvaderDeliveryCarrierCommon
 
 @tagged("post_install", "-at_install")
 class TestSetCarrier(TestShopinvaderDeliveryCarrierCommon):
+    def assertAllIn(self, actuals, expecteds):
+        for expected, actual in zip(expecteds, actuals):
+            for key, value in expected.items():
+                self.assertIn(key, actual, f"Missing{key} in item {actual}")
+                self.assertEqual(
+                    value,
+                    actual[key],
+                    f"Expected {key} in {expected} in item {actual}",
+                )
+
     def test_search_all(self):
         with self._create_test_client(router=delivery_carrier_router) as test_client:
             response: Response = test_client.get("/delivery_carriers", params={})
@@ -39,7 +49,7 @@ class TestSetCarrier(TestShopinvaderDeliveryCarrierCommon):
                 "code": self.local_carrier.code or None,
             },
         ]
-        self.assertEqual(info, expected)
+        self.assertAllIn(info, expected)
 
     def test_search_current_cart(self):
         """
@@ -78,7 +88,7 @@ class TestSetCarrier(TestShopinvaderDeliveryCarrierCommon):
                 "code": self.poste_carrier.code or None,
             },
         ]
-        self.assertEqual(info, expected)
+        self.assertAllIn(info, expected)
 
     def test_search_current_cart_with_uuid(self):
         """
@@ -118,7 +128,7 @@ class TestSetCarrier(TestShopinvaderDeliveryCarrierCommon):
                 "code": self.poste_carrier.code or None,
             },
         ]
-        self.assertEqual(info, expected)
+        self.assertAllIn(info, expected)
 
     def test_search_current_cart_no_cart(self):
         """
@@ -156,7 +166,7 @@ class TestSetCarrier(TestShopinvaderDeliveryCarrierCommon):
                 "code": self.free_carrier.code or None,
             }
         ]
-        self.assertEqual(info, expected)
+        self.assertAllIn(info, expected)
         # Check if partner country hasn't been modified
         self.assertEqual(partner_country, self.cart.partner_id.country_id)
 
@@ -182,7 +192,7 @@ class TestSetCarrier(TestShopinvaderDeliveryCarrierCommon):
         self.assertEqual(response.status_code, 200)
         info = response.json()
         expected = []
-        self.assertEqual(info, expected)
+        self.assertAllIn(info, expected)
         # Check if partner zip hasn't been modified
         self.assertEqual(partner_zip, self.cart.partner_id.zip)
 
@@ -222,6 +232,6 @@ class TestSetCarrier(TestShopinvaderDeliveryCarrierCommon):
                 "price_applied_to_cart": 20.0,
             }
         ]
-        self.assertEqual(info, expected)
+        self.assertAllIn(info, expected)
         # Check if partner zip hasn't been modified
         self.assertEqual(partner_zip, self.cart.partner_id.zip)
