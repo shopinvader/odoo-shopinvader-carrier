@@ -17,12 +17,13 @@ Shopinvader Carrier
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-shopinvader%2Fodoo--shopinvader--carrier-lightgray.png?logo=github
-    :target: https://github.com/shopinvader/odoo-shopinvader-carrier/tree/16.0/shopinvader_api_delivery_carrier
+    :target: https://github.com/shopinvader/odoo-shopinvader-carrier/tree/18.0/shopinvader_api_delivery_carrier
     :alt: shopinvader/odoo-shopinvader-carrier
 
 |badge1| |badge2| |badge3|
 
-Add the configuration and the logic to manage the carrier on your ShopInvader site
+Add the configuration and the logic to manage the carrier on your
+ShopInvader site
 
 .. IMPORTANT::
    This is an alpha version, the data model and design can change at any time without warning.
@@ -37,13 +38,15 @@ Add the configuration and the logic to manage the carrier on your ShopInvader si
 Usage
 =====
 
-This module will give you several endpoints for interacting with delivery carrier.
-You can play with it with swagger.
+This module will give you several endpoints for interacting with
+delivery carrier. You can play with it with swagger.
 
-This module provides the following routers:
-* ``delivery_carrier_router`` to get the carriers available for a partner;
-* ``delivery_carrier_cart_router`` to get the carriers available for a cart, including delivery prices for the cart, and set a carrier on a cart;
-* ``delivery_router``: to search on all deliveries linked to the authenticated partner.
+This module provides the following routers: \*
+``delivery_carrier_router`` to get the carriers available for a partner;
+\* ``delivery_carrier_cart_router`` to get the carriers available for a
+cart, including delivery prices for the cart, and set a carrier on a
+cart; \* ``delivery_router``: to search on all deliveries linked to the
+authenticated partner.
 
 Bug Tracker
 ===========
@@ -51,7 +54,7 @@ Bug Tracker
 Bugs are tracked on `GitHub Issues <https://github.com/shopinvader/odoo-shopinvader-carrier/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/shopinvader/odoo-shopinvader-carrier/issues/new?body=module:%20shopinvader_api_delivery_carrier%0Aversion:%2016.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/shopinvader/odoo-shopinvader-carrier/issues/new?body=module:%20shopinvader_api_delivery_carrier%0Aversion:%2018.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -59,26 +62,26 @@ Credits
 =======
 
 Authors
-~~~~~~~
+-------
 
 * Akretion
 * Acsone SA/NV
 * Shopinvader
 
 Contributors
-~~~~~~~~~~~~
+------------
 
-* Sebastien BEAU <sebastien.beau@akretion.com>
-* Benoit GUILLOT <benoit.guillot@akretion.com>
-* Laurent MIGNON <laurent.mignon@acsone.eu>
-* Cédric PIGEON <cedric.pigeon@acsone.eu>
-* Denis ROUSSEL <denis.roussel@acsone.eu>
-* Simone Orsi <simone.orsi@camptocamp.com>
-* Marie Lejeune <marie.lejeune@acsone.eu>
+- Sebastien BEAU <sebastien.beau@akretion.com>
+- Benoit GUILLOT <benoit.guillot@akretion.com>
+- Laurent MIGNON <laurent.mignon@acsone.eu>
+- Cédric PIGEON <cedric.pigeon@acsone.eu>
+- Denis ROUSSEL <denis.roussel@acsone.eu>
+- Simone Orsi <simone.orsi@camptocamp.com>
+- Marie Lejeune <marie.lejeune@acsone.eu>
 
 Maintainers
-~~~~~~~~~~~
+-----------
 
-This module is part of the `shopinvader/odoo-shopinvader-carrier <https://github.com/shopinvader/odoo-shopinvader-carrier/tree/16.0/shopinvader_api_delivery_carrier>`_ project on GitHub.
+This module is part of the `shopinvader/odoo-shopinvader-carrier <https://github.com/shopinvader/odoo-shopinvader-carrier/tree/18.0/shopinvader_api_delivery_carrier>`_ project on GitHub.
 
 You are welcome to contribute.
