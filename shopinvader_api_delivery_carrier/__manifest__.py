@@ -13,7 +13,7 @@
     "development_status": "Alpha",
     "license": "AGPL-3",
     "application": False,
-    'installable': False,
+    "installable": False,
     "external_dependencies": {
         "python": [
             "fastapi",

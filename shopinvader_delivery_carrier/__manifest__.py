@@ -13,5 +13,5 @@
         "delivery",
     ],
     "data": [],
-    'installable': False,
+    "installable": False,
 }

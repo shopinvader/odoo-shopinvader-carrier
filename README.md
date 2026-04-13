@@ -1,4 +1,6 @@
 
+
+# Odoo module for shopinvader api for carrier
 <!-- /!\ Non OCA Context : Set here the badge of your runbot / runboat instance. -->
 [![Pre-commit Status](https://github.com/shopinvader/odoo-shopinvader-carrier/actions/workflows/pre-commit.yml/badge.svg?branch=18.0)](https://github.com/shopinvader/odoo-shopinvader-carrier/actions/workflows/pre-commit.yml?query=branch%3A18.0)
 [![Build Status](https://github.com/shopinvader/odoo-shopinvader-carrier/actions/workflows/test.yml/badge.svg?branch=18.0)](https://github.com/shopinvader/odoo-shopinvader-carrier/actions/workflows/test.yml?query=branch%3A18.0)
@@ -6,8 +8,6 @@
 <!-- /!\ Non OCA Context : Set here the badge of your translation instance. -->
 
 <!-- /!\ do not modify above this line -->
-
-# Odoo module for shopinvader api for carrier
 
 Odoo module for shopinvader api for carrier
 
@@ -17,12 +17,7 @@ Odoo module for shopinvader api for carrier
 
 [//]: # (addons)
 
-Unported addons
----------------
-addon | version | maintainers | summary
---- | --- | --- | ---
-[shopinvader_api_delivery_carrier](shopinvader_api_delivery_carrier/) | 16.0.1.1.1 (unported) |  | Carrier integration for Shopinvader
-[shopinvader_delivery_carrier](shopinvader_delivery_carrier/) | 16.0.1.0.0 (unported) |  | ShopInvader logic for delivery carriers.
+This part will be replaced when running the oca-gen-addons-table script from OCA/maintainer-tools.
 
 [//]: # (end addons)
 

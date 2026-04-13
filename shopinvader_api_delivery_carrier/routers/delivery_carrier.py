@@ -16,6 +16,8 @@ from odoo.addons.fastapi.dependencies import (
 
 from ..schemas import (
     DeliveryCarrier as DeliveryCarrierSchema,
+)
+from ..schemas import (
     DeliveryCarrierSearch,
     DeliveryCarrierWithPrice,
 )

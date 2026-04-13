@@ -89,7 +89,7 @@ class TestSearchDeliveries(TestShopinvaderDeliveryCarrierCommon):
         # To have them into correct order
         pickings = pickings.search([("id", "in", pickings.ids)])
         self.assertEqual(len(data), len(pickings))
-        for current_data, picking in zip(data, pickings):
+        for current_data, picking in zip(data, pickings, strict=False):
             carrier_dict = current_data.get("carrier")
             sale_id = current_data.get("sale_id")
             self.assertEqual(current_data.get("delivery_id"), picking.id)

@@ -1,9 +1,10 @@
 # Do NOT update manually; changes here will be overwritten by Copier
-_commit: v1.33
+_commit: v1.39
 _src_path: https://github.com/OCA/oca-addons-repo-template
+additional_ruff_rules: []
 ci: GitHub
-convert_readme_fragments_to_markdown: false
-enable_checklog_odoo: false
+convert_readme_fragments_to_markdown: true
+enable_checklog_odoo: true
 generate_requirements_txt: true
 github_check_license: true
 github_ci_extra_env:
@@ -14,7 +15,7 @@ github_enable_stale_action: true
 github_enforce_dev_status_compatibility: true
 include_wkhtmltopdf: false
 odoo_test_flavor: Both
-odoo_version: 16.0
+odoo_version: 18.0
 org_name: Shopinvader
 org_slug: shopinvader
 rebel_module_groups: []
@@ -22,6 +23,6 @@ repo_description: Odoo module for shopinvader api for carrier
 repo_name: Odoo module for shopinvader api for carrier
 repo_slug: odoo-shopinvader-carrier
 repo_website: https://github.com/shopinvader/odoo-shopinvader-carrier
-use_pyproject_toml: false
-use_ruff: false
+use_pyproject_toml: true
+use_ruff: true
 
