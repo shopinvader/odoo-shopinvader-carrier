@@ -3,9 +3,8 @@
 
 {
     "name": "Shopinvader Delivery Carrier",
-    "summary": """
-        ShopInvader logic for delivery carriers.""",
-    "version": "16.0.1.0.0",
+    "summary": "ShopInvader logic for delivery carriers.",
+    "version": "18.0.1.0.0",
     "license": "AGPL-3",
     "author": "ACSONE SA/NV,Shopinvader",
     "website": "https://github.com/shopinvader/odoo-shopinvader-carrier",
@@ -13,5 +12,5 @@
         "delivery",
     ],
     "data": [],
-    "installable": False,
+    "installable": True,
 }
