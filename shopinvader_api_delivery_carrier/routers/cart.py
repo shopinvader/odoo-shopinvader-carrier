@@ -6,16 +6,13 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from odoo import _, api, models
+from odoo import _, api
 from odoo.exceptions import UserError
 
-from odoo.addons.base.models.res_partner import Partner as ResPartner
-from odoo.addons.fastapi.dependencies import (
-    authenticated_partner,
-    authenticated_partner_env,
-)
 from odoo.addons.sale.models.sale_order import SaleOrder
+from odoo.addons.shopinvader_api_cart.routers.cart import cart_helper
 from odoo.addons.shopinvader_api_cart.schemas import CartTransaction
+from odoo.addons.shopinvader_router_helper import VirtualModel
 from odoo.addons.shopinvader_schema_sale.schemas import Sale
 
 from ..schemas import DeliveryCarrierInput
@@ -23,29 +20,7 @@ from ..schemas import DeliveryCarrierInput
 delivery_carrier_cart_router = APIRouter(tags=["carts"])
 
 
-@delivery_carrier_cart_router.post("/set_carrier", deprecated=True)
-@delivery_carrier_cart_router.post("/{uuid}/set_carrier", deprecated=True)
-@delivery_carrier_cart_router.post("/current/set_carrier", deprecated=True)
-@delivery_carrier_cart_router.post("/carrier")
-@delivery_carrier_cart_router.post("/{uuid}/carrier")
-@delivery_carrier_cart_router.post("/current/carrier")
-def set_carrier(
-    env: Annotated[api.Environment, Depends(authenticated_partner_env)],
-    partner: Annotated["ResPartner", Depends(authenticated_partner)],
-    data: DeliveryCarrierInput,
-    uuid: str | None = None,
-) -> Sale | None:
-    """
-    If cart is found, set the carrier on it.
-    """
-    cart = env["sale.order"]._find_open_cart(partner.id, uuid)
-    if not cart:
-        raise UserError(_("There is no cart"))
-    env["shopinvader_api_cart.cart_router.helper"]._set_carrier(cart, data)
-    return Sale.from_sale_order(cart) if cart else None
-
-
-class ShopinvaderApiCartRouterHelper(models.AbstractModel):
+class CartHelper(VirtualModel):
     _inherit = "shopinvader_api_cart.cart_router.helper"
 
     # Set carrier
@@ -72,12 +47,29 @@ class ShopinvaderApiCartRouterHelper(models.AbstractModel):
     @api.model
     def _sync_cart(
         self,
-        partner: ResPartner,
         cart: SaleOrder,
         uuid: str,
         transactions: list[CartTransaction],
     ):
-        cart = super()._sync_cart(partner, cart, uuid, transactions)
+        cart = super()._sync_cart(cart, uuid, transactions)
         if transactions:
             cart._remove_delivery_line()
         return cart
+
+
+@delivery_carrier_cart_router.post("/carrier")
+@delivery_carrier_cart_router.post("/{uuid}/carrier")
+@delivery_carrier_cart_router.post("/current/carrier")
+def set_carrier(
+    helper: Annotated[CartHelper, Depends(cart_helper)],
+    data: DeliveryCarrierInput,
+    uuid: str | None = None,
+) -> Sale | None:
+    """
+    If cart is found, set the carrier on it.
+    """
+    cart = helper._get_cart(uuid)
+    if not cart:
+        raise UserError(_("There is no cart"))
+    helper._set_carrier(cart, data)
+    return Sale.from_sale_order(cart) if cart else None

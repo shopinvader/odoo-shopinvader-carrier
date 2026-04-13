@@ -15,7 +15,7 @@ class TestSaleDeliveries(TestShopinvaderDeliveryCarrierCommon):
     def setUpClass(cls):
         super().setUpClass()
         product_model = cls.env["product.product"]
-        product = product_model.create({"name": "Unittest P1", "type": "product"})
+        product = product_model.create({"name": "Unittest P1", "is_storable": True})
         cls.cart.order_line[0].product_id = product
         cls.stock_loc = cls.env.ref("stock.stock_location_stock")
         cls.customer_loc = cls.env.ref("stock.stock_location_customers")
