@@ -21,14 +21,8 @@ Available addons
 ----------------
 addon | version | maintainers | summary
 --- | --- | --- | ---
+[shopinvader_api_delivery_carrier](shopinvader_api_delivery_carrier/) | 18.0.1.0.0 |  | Carrier integration for Shopinvader
 [shopinvader_delivery_carrier](shopinvader_delivery_carrier/) | 18.0.1.0.0 |  | ShopInvader logic for delivery carriers.
-
-
-Unported addons
----------------
-addon | version | maintainers | summary
---- | --- | --- | ---
-[shopinvader_api_delivery_carrier](shopinvader_api_delivery_carrier/) | 16.0.1.1.1 (unported) |  | Carrier integration for Shopinvader
 
 [//]: # (end addons)
 
