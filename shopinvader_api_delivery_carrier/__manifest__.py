@@ -6,14 +6,13 @@
 {
     "name": "Shopinvader Carrier",
     "summary": "Carrier integration for Shopinvader",
-    "version": "16.0.1.1.1",
+    "version": "18.0.1.0.0",
     "category": "e-commerce",
     "website": "https://github.com/shopinvader/odoo-shopinvader-carrier",
     "author": "Akretion, Acsone SA/NV,Shopinvader",
     "development_status": "Alpha",
     "license": "AGPL-3",
-    "application": False,
-    "installable": False,
+    "installable": True,
     "external_dependencies": {
         "python": [
             "fastapi",
@@ -23,6 +22,7 @@
     },
     "depends": [
         "delivery",
+        "stock",
         # OCA/delivery-carrier
         "delivery_carrier_info",
         # OCA/queue
@@ -31,16 +31,9 @@
         "sale_shipping_info_helper",
         "sale_discount_display_amount",
         # Shopinvader
-        "pydantic",
-        "extendable",
-        "fastapi",
-        "extendable_fastapi",
         "shopinvader_api_cart",
-        "shopinvader_api_security_sale",
         "shopinvader_delivery_carrier",
-        "shopinvader_filtered_model",
-        "shopinvader_sale_cart",
-        "shopinvader_schema_sale",
+        "shopinvader_router_helper",
     ],
     "data": [
         "security/groups.xml",
@@ -50,11 +43,13 @@
         "security/acl_product_pricelist.xml",
         "security/acl_product_category.xml",
         "security/acl_account_tax.xml",
+        "security/acl_res_company.xml",
         "security/acl_sale_order.xml",
         "security/acl_sale_order_line.xml",
         "security/acl_product_template.xml",
         "security/acl_product_product.xml",
         "security/acl_stock_picking.xml",
         "security/acl_stock_picking_type.xml",
+        "security/acl_stock_warehouse.xml",
     ],
 }

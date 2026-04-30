@@ -7,7 +7,7 @@ from requests import Response
 
 from odoo.tests.common import tagged
 
-from ..routers import delivery_carrier_router
+from ..routers import delivery_carrier_cart_router, delivery_carrier_router
 from .common import TestShopinvaderDeliveryCarrierCommon
 
 
@@ -47,7 +47,9 @@ class TestSetCarrier(TestShopinvaderDeliveryCarrierCommon):
         carriers that can be applied to current cart.
         :return:
         """
-        with self._create_test_client(router=delivery_carrier_router) as test_client:
+        with self._create_test_client(
+            router=delivery_carrier_cart_router
+        ) as test_client:
             response: Response = test_client.get(
                 "/current/delivery_carriers", params={}
             )
@@ -85,7 +87,9 @@ class TestSetCarrier(TestShopinvaderDeliveryCarrierCommon):
         Test that the right structure is returned when searching for delivery
         carriers that can be applied to current cart.
         """
-        with self._create_test_client(router=delivery_carrier_router) as test_client:
+        with self._create_test_client(
+            router=delivery_carrier_cart_router
+        ) as test_client:
             response: Response = test_client.get(
                 f"/{self.cart.uuid}/delivery_carriers", params={}
             )
@@ -122,7 +126,9 @@ class TestSetCarrier(TestShopinvaderDeliveryCarrierCommon):
         for the current cart -> Raise HTTPException
         """
         self.cart.sudo().unlink()
-        with self._create_test_client(router=delivery_carrier_router) as test_client:
+        with self._create_test_client(
+            router=delivery_carrier_cart_router
+        ) as test_client:
             response: Response = test_client.get(
                 "/current/delivery_carriers", params={}
             )
@@ -132,7 +138,9 @@ class TestSetCarrier(TestShopinvaderDeliveryCarrierCommon):
         partner_country = self.cart.partner_id.country_id
         self.poste_carrier.country_ids = self.env.ref("base.be")
         self.local_carrier.country_ids = self.env.ref("base.be")
-        with self._create_test_client(router=delivery_carrier_router) as test_client:
+        with self._create_test_client(
+            router=delivery_carrier_cart_router
+        ) as test_client:
             response: Response = test_client.get(
                 "/current/delivery_carriers",
                 params={"country_id": self.env.ref("base.us").id},
@@ -161,7 +169,9 @@ class TestSetCarrier(TestShopinvaderDeliveryCarrierCommon):
         self.local_carrier.country_ids = self.env.ref("base.be")
         self.poste_carrier.country_ids = self.env.ref("base.fr")
         self.poste_carrier.zip_prefix_ids = [(0, 0, {"name": "750"})]
-        with self._create_test_client(router=delivery_carrier_router) as test_client:
+        with self._create_test_client(
+            router=delivery_carrier_cart_router
+        ) as test_client:
             data = {
                 "zipcode": "75100",
                 "country_id": self.env.ref("base.fr").id,
@@ -191,7 +201,9 @@ class TestSetCarrier(TestShopinvaderDeliveryCarrierCommon):
             (0, 0, {"name": "752"}),
         ]
 
-        with self._create_test_client(router=delivery_carrier_router) as test_client:
+        with self._create_test_client(
+            router=delivery_carrier_cart_router
+        ) as test_client:
             data = {
                 "zipcode": "75100",
                 "country_id": self.env.ref("base.fr").id,
