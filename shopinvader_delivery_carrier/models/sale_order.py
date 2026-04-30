@@ -27,7 +27,7 @@ class SaleOrder(models.Model):
             ]
         )
         return (
-            carriers.available_carriers(self.partner_shipping_id)
+            carriers.available_carriers(self.partner_shipping_id, self)
             if self.partner_id
             else carriers
         )
