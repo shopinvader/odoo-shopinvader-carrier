@@ -5,16 +5,17 @@
 import logging
 from math import sqrt
 
-from odoo import models
+from odoo.addons.shopinvader_router_helper import VirtualModel
 
 _logger = logging.getLogger(__name__)
+
 try:
     from roulier import roulier
 except ImportError:
     _logger.debug("Cannot `import roulier`.")
 
 
-class ShopinvaderApiDeliveryRouterHelper(models.AbstractModel):
+class DeliveryPickupHelper(VirtualModel):
     _inherit = "shopinvader_api_delivery_pickup.delivery_pickup_router.helper"
 
     def _available_roulier_carriers(self, cart):
@@ -26,9 +27,11 @@ class ShopinvaderApiDeliveryRouterHelper(models.AbstractModel):
         available_carrier_actions = roulier.get_carriers_action_available()
 
         delivery_carriers = delivery_carriers.filtered(
-            lambda carrier: carrier.with_dropoff_site
-            and "search_pickup_sites"
-            in available_carrier_actions.get(carrier.delivery_type, [])
+            lambda carrier: (
+                carrier.with_dropoff_site
+                and "search_pickup_sites"
+                in available_carrier_actions.get(carrier.delivery_type, [])
+            )
         )
         return delivery_carriers
 
@@ -47,8 +50,11 @@ class ShopinvaderApiDeliveryRouterHelper(models.AbstractModel):
             # Deduplicate saved dropoff sites
             for site in new_dropoff_sites:
                 dropoff_sites = dropoff_sites.filtered(
-                    lambda site: not (
-                        site.carrier_id == site.carrier_id and site.code == site.code
+                    lambda site: (
+                        not (
+                            site.carrier_id == site.carrier_id
+                            and site.code == site.code
+                        )
                     )
                 )
             dropoff_sites |= new_dropoff_sites
