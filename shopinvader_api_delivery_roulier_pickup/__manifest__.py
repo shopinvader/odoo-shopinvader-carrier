@@ -5,7 +5,7 @@
 {
     "name": "Shopinvader API Delivery Pickup Roulier",
     "summary": "Integrate Roulier pickup sites in Shopinvader",
-    "version": "16.0.1.0.0",
+    "version": "18.0.1.0.0",
     "category": "e-commerce",
     "website": "https://github.com/shopinvader/odoo-shopinvader-carrier",
     "author": "Shopinvader, Akretion",
@@ -15,6 +15,4 @@
     "external_dependencies": {"python": ["roulier"]},
     "depends": ["shopinvader_api_delivery_pickup", "delivery_roulier"],
     "data": [],
-    "demo": [],
-    "qweb": [],
 }

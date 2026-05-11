@@ -4,7 +4,7 @@
 
 import logging
 
-from odoo import _, models
+from odoo import models
 from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
@@ -14,6 +14,7 @@ try:
     from roulier.exception import CarrierError, InvalidApiInput
 except ImportError:
     _logger.debug("Cannot `import roulier`.")
+    roulier = None
 
 
 class DeliveryCarrier(models.Model):
@@ -30,10 +31,19 @@ class DeliveryCarrier(models.Model):
 
         return payload
 
+    def _is_roulier_pickup(self):
+        if not roulier:
+            return False
+        available_carrier_actions = roulier.get_carriers_action_available() or {}
+        return "search_pickup_sites" in available_carrier_actions.get(
+            self.delivery_type, []
+        )
+
     def _roulier_search_dropoff_sites(self, search):
         self.ensure_one()
-        if not self._is_roulier():
-            return []
+        sites = self.env["dropoff.site"]
+        if not self._is_roulier_pickup():
+            return sites
 
         payload = {
             **self._roulier_get_base_payload(),
@@ -50,8 +60,6 @@ class DeliveryCarrier(models.Model):
             _logger.warning("CarrierError: %s", exc_info=True)
             return []
 
-        sites = self.env["dropoff.site"]
-
         for site in ret.get("sites", []):
             code = f"roulier_{site['id']}"
             if site.get("zone"):
@@ -65,6 +73,7 @@ class DeliveryCarrier(models.Model):
                     "zip": site["zip"],
                     "city": site["city"],
                     "country_id": self.env["res.country"]
+                    .sudo()
                     .search([("code", "=", site["country"])])
                     .id,
                     "carrier_id": self.id,
@@ -78,7 +87,9 @@ class DeliveryCarrier(models.Model):
     def _roulier_upsert_pickup_site(self, get):
         self.ensure_one()
         if not self._is_roulier():
-            raise UserError(_("Carrier %s is not a Roulier carrier") % self.name)
+            raise UserError(
+                self.env._("Carrier %s is not a Roulier carrier") % self.name
+            )
         code = get["code"]
         if "__" in get["code"]:
             # If the code contains a zone, we need to split it to get the
@@ -95,7 +106,7 @@ class DeliveryCarrier(models.Model):
 
         site = ret.get("site")
         if not site:
-            raise UserError(_("Invalid pickup site"))
+            raise UserError(self.env._("Invalid pickup site"))
 
         vals = {
             "code": code,
