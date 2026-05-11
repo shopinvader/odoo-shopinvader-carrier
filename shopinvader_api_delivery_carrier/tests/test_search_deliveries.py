@@ -117,6 +117,14 @@ class TestSearchDeliveries(TestShopinvaderDeliveryCarrierCommon):
                 )
             else:
                 self.assertFalse(current_data.get("delivery_date"))
+
+            self.assertEqual(len(current_data.get("lines")), len(picking.move_ids))
+            for line_data, line in zip(current_data.get("lines"), picking.move_ids):
+                self.assertEqual(line_data.get("product_id"), line.product_id.id)
+                self.assertEqual(line_data.get("product_name"), line.product_id.name)
+                self.assertEqual(line_data.get("state"), line.state)
+                self.assertEqual(line_data.get("qty"), line.product_uom_qty)
+                self.assertEqual(line_data.get("qty_done"), line.quantity)
         return True
 
     def test_get_picking_logged_without_sale(self):
@@ -172,3 +180,68 @@ class TestSearchDeliveries(TestShopinvaderDeliveryCarrierCommon):
         self.assertEqual(response.status_code, 200)
         info = response.json()
         self._check_data_content(info["items"], pickings)
+
+    def test_get_picking_search_name(self):
+        picking1 = self._create_picking(self.partner, sale=True)
+        self._create_picking(self.partner, sale=True)
+
+        with self._create_test_client(router=delivery_router) as test_client:
+            response: Response = test_client.get(
+                "/deliveries", params={"name": picking1.name}
+            )
+        self.assertEqual(response.status_code, 200)
+        info = response.json()
+        self._check_data_content(info["items"], picking1)
+
+    def test_get_picking_search_tracking_ref(self):
+        picking1 = self._create_picking(self.partner, sale=True)
+        self._create_picking(self.partner, sale=True)
+        self._fill_picking_optional_values(picking1)
+
+        with self._create_test_client(router=delivery_router) as test_client:
+            response: Response = test_client.get(
+                "/deliveries",
+                params={"tracking_reference": picking1.carrier_tracking_ref},
+            )
+        self.assertEqual(response.status_code, 200)
+        info = response.json()
+        self._check_data_content(info["items"], picking1)
+
+    def test_get_picking_search_sale_id(self):
+        picking1 = self._create_picking(self.partner, sale=True)
+        self._create_picking(self.partner, sale=True)
+        self._fill_picking_optional_values(picking1)
+
+        with self._create_test_client(router=delivery_router) as test_client:
+            response: Response = test_client.get(
+                "/deliveries", params={"sale_id": picking1.sale_id.id}
+            )
+        self.assertEqual(response.status_code, 200)
+        info = response.json()
+        self._check_data_content(info["items"], picking1)
+
+    def test_get_picking_search_carrier_id(self):
+        picking1 = self._create_picking(self.partner, sale=True)
+        self._create_picking(self.partner, sale=True)
+        self._fill_picking_optional_values(picking1)
+
+        with self._create_test_client(router=delivery_router) as test_client:
+            response: Response = test_client.get(
+                "/deliveries", params={"carrier_id": picking1.carrier_id.id}
+            )
+        self.assertEqual(response.status_code, 200)
+        info = response.json()
+        self._check_data_content(info["items"], picking1)
+
+    def test_get_picking_search_state(self):
+        picking1 = self._create_picking(self.partner, sale=True)
+        self._create_picking(self.partner, sale=True)
+        picking1.action_cancel()
+
+        with self._create_test_client(router=delivery_router) as test_client:
+            response: Response = test_client.get(
+                "/deliveries", params={"state": "cancel"}
+            )
+        self.assertEqual(response.status_code, 200)
+        info = response.json()
+        self._check_data_content(info["items"], picking1)
