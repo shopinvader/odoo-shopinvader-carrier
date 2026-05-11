@@ -2,7 +2,6 @@
 # Copyright 2025 Akretion (http://www.akretion.com).
 # @author Florian Mounier <florian.mounier@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
-from typing import List
 
 from extendable_pydantic import StrictExtendableBaseModel
 
@@ -34,7 +33,7 @@ class DeliveryPickup(StrictExtendableBaseModel):
     state_id: int | None = None
     country_id: int
     calendar_id: int | None = None
-    attendance_ids: List[ResourceCalendarAttendance] | None = None
+    attendance_ids: list[ResourceCalendarAttendance] | None = None
     lat: float | None = None
     lng: float | None = None
 

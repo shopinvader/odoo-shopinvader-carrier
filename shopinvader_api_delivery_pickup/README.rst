@@ -1,7 +1,3 @@
-.. image:: https://odoo-community.org/readme-banner-image
-   :target: https://odoo-community.org/get-involved?utm_source=readme
-   :alt: Odoo Community Association
-
 ===========================
 Shopinvader Delivery Pickup
 ===========================
@@ -17,11 +13,11 @@ Shopinvader Delivery Pickup
 .. |badge1| image:: https://img.shields.io/badge/maturity-Alpha-red.png
     :target: https://odoo-community.org/page/development-status
     :alt: Alpha
-.. |badge2| image:: https://img.shields.io/badge/license-AGPL--3-blue.png
+.. |badge2| image:: https://img.shields.io/badge/licence-AGPL--3-blue.png
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-shopinvader%2Fodoo--shopinvader--carrier-lightgray.png?logo=github
-    :target: https://github.com/shopinvader/odoo-shopinvader-carrier/tree/16.0/shopinvader_api_delivery_pickup
+    :target: https://github.com/shopinvader/odoo-shopinvader-carrier/tree/18.0/shopinvader_api_delivery_pickup
     :alt: shopinvader/odoo-shopinvader-carrier
 
 |badge1| |badge2| |badge3|
@@ -49,7 +45,7 @@ Bug Tracker
 Bugs are tracked on `GitHub Issues <https://github.com/shopinvader/odoo-shopinvader-carrier/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/shopinvader/odoo-shopinvader-carrier/issues/new?body=module:%20shopinvader_api_delivery_pickup%0Aversion:%2016.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/shopinvader/odoo-shopinvader-carrier/issues/new?body=module:%20shopinvader_api_delivery_pickup%0Aversion:%2018.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -57,32 +53,32 @@ Credits
 =======
 
 Authors
-~~~~~~~
+-------
 
 * Akretion
 * ACSONE SA/NV
 * Shopinvader
 
 Contributors
-~~~~~~~~~~~~
+------------
 
-* Sebastien BEAU <sebastien.beau@akretion.com>
-* Laurent Mignon <laurent.mignon@acsone.eu>
-* Raphaël Reverdy <raphael.reverdy@akretion.com>
-* Chafique DELLI <chafique.delli@akretion.com>
-* Florian Mounier <florian.mounier@akretion.com>
+- Sebastien BEAU <sebastien.beau@akretion.com>
+- Laurent Mignon <laurent.mignon@acsone.eu>
+- Raphaël Reverdy <raphael.reverdy@akretion.com>
+- Chafique DELLI <chafique.delli@akretion.com>
+- Florian Mounier <florian.mounier@akretion.com>
 
 Other credits
-~~~~~~~~~~~~~
+-------------
 
 The development of this module has been financially supported by:
 
-* Akretion
-* ACSONE SA/NV
+- Akretion
+- ACSONE SA/NV
 
 Maintainers
-~~~~~~~~~~~
+-----------
 
-This module is part of the `shopinvader/odoo-shopinvader-carrier <https://github.com/shopinvader/odoo-shopinvader-carrier/tree/16.0/shopinvader_api_delivery_pickup>`_ project on GitHub.
+This module is part of the `shopinvader/odoo-shopinvader-carrier <https://github.com/shopinvader/odoo-shopinvader-carrier/tree/18.0/shopinvader_api_delivery_pickup>`_ project on GitHub.
 
 You are welcome to contribute.

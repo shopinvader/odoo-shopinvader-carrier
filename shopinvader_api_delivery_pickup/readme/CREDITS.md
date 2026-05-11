@@ -1,4 +1,4 @@
 The development of this module has been financially supported by:
 
-* Akretion
-* ACSONE SA/NV
+- Akretion
+- ACSONE SA/NV
