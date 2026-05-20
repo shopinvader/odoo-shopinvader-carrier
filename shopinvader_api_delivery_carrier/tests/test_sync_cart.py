@@ -2,7 +2,6 @@
 # @author Sébastien BEAU <sebastien.beau@akretion.com>
 # Copyright 2023 ACSONE SA/NV
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
-import json
 import uuid
 
 from requests import Response
@@ -40,9 +39,7 @@ class TestSyncCart(TestShopinvaderDeliveryCarrierCommon):
             data = {
                 "carrier_id": carrier.id,
             }
-            response: Response = test_client.post(
-                "/set_carrier", content=json.dumps(data)
-            )
+            response: Response = test_client.post("/set_carrier", json=data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.cart.carrier_id.id, carrier.id)
         return response.json()
@@ -64,7 +61,7 @@ class TestSyncCart(TestShopinvaderDeliveryCarrierCommon):
                     {"uuid": self.trans_uuid_1, "product_id": product.id, "qty": 1}
                 ]
             }
-            response: Response = test_client.post("/sync", content=json.dumps(data))
+            response: Response = test_client.post("/sync", json=data)
         self.assertEqual(response.status_code, 201)
         res = response.json()
         self.assertEqual(
@@ -91,7 +88,7 @@ class TestSyncCart(TestShopinvaderDeliveryCarrierCommon):
                     }
                 ]
             }
-            response: Response = test_client.post("/sync", content=json.dumps(data))
+            response: Response = test_client.post("/sync", json=data)
         self.assertEqual(response.status_code, 201)
         res = response.json()
         self.assertEqual(self.cart.order_line[0].product_uom_qty, 4)
@@ -114,7 +111,7 @@ class TestSyncCart(TestShopinvaderDeliveryCarrierCommon):
                     }
                 ]
             }
-            response: Response = test_client.post("/sync", content=json.dumps(data))
+            response: Response = test_client.post("/sync", json=data)
         self.assertEqual(response.status_code, 201)
         res = response.json()
         self.assertFalse(self.cart.order_line)

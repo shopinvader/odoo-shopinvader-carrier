@@ -2,7 +2,6 @@
 # @author Iván Todorovich <ivan.todorovich@gmail.com>
 # Copyright 2023 ACSONE SA/NV
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
-import json
 
 from requests import Response
 
@@ -36,9 +35,7 @@ class TestSetCarrier(TestShopinvaderDeliveryCarrierCommon):
             data = {
                 "carrier_id": self.free_carrier.id,
             }
-            response: Response = test_client.post(
-                "/set_carrier", content=json.dumps(data)
-            )
+            response: Response = test_client.post("/set_carrier", json=data)
         self.assertEqual(response.status_code, 200)
         info = response.json()
         self.assertEqual(info["delivery"]["amount"]["total"], 0)
@@ -63,9 +60,7 @@ class TestSetCarrier(TestShopinvaderDeliveryCarrierCommon):
             data = {
                 "carrier_id": self.poste_carrier.id,
             }
-            response: Response = test_client.post(
-                "/set_carrier", content=json.dumps(data)
-            )
+            response: Response = test_client.post("/set_carrier", json=data)
         self.assertEqual(response.status_code, 200)
         info = response.json()
         # Check delivery amount
