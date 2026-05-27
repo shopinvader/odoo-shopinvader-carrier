@@ -29,7 +29,7 @@ class CartHelper(VirtualModel):
         ctx = self.env.context.copy()
         ctx.update({"default_order_id": cart.id, "default_carrier_id": carrier_id})
         wizard = self.env["choose.delivery.carrier"].with_context(**ctx).create({})
-        wizard._onchange_carrier_id()
+        wizard._get_delivery_rate()
         wizard.button_confirm()
         return wizard.delivery_price
 
