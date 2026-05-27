@@ -4,7 +4,7 @@ from .delivery_carrier import (
     DeliveryCarrierInput,
     DeliveryCarrierSearch,
 )
-from .picking import Picking
+from .picking import Picking, PickingSearch
 from .delivery import DeliveryInfo, DeliveryAmount
 from .amount import SaleAmount
 from .sale_line import SaleLine

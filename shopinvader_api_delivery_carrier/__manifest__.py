@@ -51,5 +51,7 @@
         "security/acl_stock_picking.xml",
         "security/acl_stock_picking_type.xml",
         "security/acl_stock_warehouse.xml",
+        "security/acl_stock_move.xml",
+        "security/acl_stock_move_line.xml",
     ],
 }

@@ -16,7 +16,7 @@ from odoo.addons.fastapi.dependencies import (
 from odoo.addons.fastapi.schemas import Paging
 from odoo.addons.shopinvader_router_helper import VirtualModel
 
-from ..schemas import Picking
+from ..schemas import Picking, PickingSearch
 
 delivery_router = APIRouter(tags=["deliveries"])
 
@@ -29,10 +29,11 @@ class DeliveryHelper(VirtualModel):
 
     partner = fields.Many2one("res.partner")
 
+    def _get_picking_sale_domain(self):
+        return [("typology", "=", "sale"), ("partner_id", "=", self.partner.id)]
+
     def _domain(self):
-        sales = self.env["sale.order"].search(
-            [("typology", "=", "sale"), ("partner_id", "=", self.partner.id)]
-        )
+        sales = self.env["sale.order"].search(self._get_picking_sale_domain())
         return [
             ("sale_id", "in", sales.ids),
             ("picking_type_id.code", "=", "outgoing"),
@@ -50,13 +51,14 @@ def delivery_helper(
 
 @delivery_router.get("/deliveries")
 def search(
+    params: Annotated[PickingSearch, Depends()],
     paging: Annotated[Paging, Depends(paging)],
     helper: Annotated[DeliveryHelper, Depends(delivery_helper)],
 ) -> PagedCollection[Picking]:
     """Return all outgoing Deliveries for the authenticated partner."""
 
     count, pickings = helper.search_with_count(
-        [],
+        params.to_odoo_domain(helper.env),
         limit=paging.limit,
         offset=paging.offset,
     )
