@@ -6,7 +6,7 @@
 {
     "name": "Shopinvader Carrier",
     "summary": "Carrier integration for Shopinvader",
-    "version": "16.0.1.1.2",
+    "version": "16.0.1.1.3",
     "category": "e-commerce",
     "website": "https://github.com/shopinvader/odoo-shopinvader-carrier",
     "author": "Akretion, Acsone SA/NV,Shopinvader",
