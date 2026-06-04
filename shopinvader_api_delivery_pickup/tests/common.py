@@ -2,7 +2,8 @@
 # Copyright 2019 ACSONE SA/NV
 # @author Sébastien BEAU <sebastien.beau@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
-import json
+from contextlib import contextmanager
+from unittest.mock import patch
 
 from requests import Response
 
@@ -12,6 +13,8 @@ from odoo.addons.shopinvader_api_delivery_carrier.routers import (
 from odoo.addons.shopinvader_api_delivery_carrier.tests.common import (
     TestShopinvaderDeliveryCarrierCommon,
 )
+
+from ..routers import delivery_pickup_router
 
 
 class TestShopinvaderDeliveryPickupCommon(TestShopinvaderDeliveryCarrierCommon):
@@ -24,15 +27,11 @@ class TestShopinvaderDeliveryPickupCommon(TestShopinvaderDeliveryCarrierCommon):
                 0,
                 [
                     cls.env.ref(
-                        "shopinvader_api_security_sale.shopinvader_sale_user_group"
+                        "shopinvader_api_delivery_pickup.shopinvader_delivery_pickup_user_group"
                     ).id,
-                    cls.env.ref("sales_team.group_sale_salesman").id,
                 ],
             )
         ]
-        # cls.user_with_rights.groups_id = [
-        #     (4, cls.env.ref("sales_team.group_sale_salesman").id)
-        # ]
         cls.pickup_carrier = cls.env.ref("delivery_dropoff_site.delivery_carrier")
         cls.poste_carrier.with_dropoff_site = True
         cls.cart.carrier_id = cls.poste_carrier.id
@@ -63,8 +62,30 @@ class TestShopinvaderDeliveryPickupCommon(TestShopinvaderDeliveryCarrierCommon):
             data = {
                 "carrier_id": carrier_id,
             }
-            response: Response = test_client.post("/carrier", content=json.dumps(data))
+            response: Response = test_client.post("/carrier", json=data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.cart.carrier_id.id, carrier_id)
         self.cart.onchange_partner_shipping_id_final()
+        return response.json()
+
+    @contextmanager
+    def _mock_geocoder(self):
+        def mock_geocode(address, **_kwargs):
+            return {
+                "Rue de la Paix, 69000 Lyon, FR": (45.6626433, 4.5620656),
+                "Rue de la Résistance, 75000 Paris, FR": (49.2568916, 2.4776642),
+                "Rue de la République, 69100 Villeurbanne, FR": (45.7733573, 4.8868454),
+            }.get(address)
+
+        with patch(
+            "odoo.addons.base_geolocalize.models.base_geocoder.GeoCoder.geo_find",
+            wraps=mock_geocode,
+        ):
+            yield
+
+    def _delivery_pickup_search(self, **params):
+        with self._create_test_client(router=delivery_pickup_router) as test_client:
+            response = test_client.get("/delivery_pickups", params=params)
+
+        self.assertEqual(response.status_code, 200, response.text)
         return response.json()

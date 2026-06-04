@@ -2,6 +2,16 @@
 <!-- Copyright 2024 AKRETION
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 <odoo>
+    <record id="shopinvader_res_partner_is_dropoff_site" model="ir.rule">
+        <field name="name">Delivery pickup dropoff site partner rule</field>
+        <field name="model_id" ref="base.model_res_partner" />
+        <field name="domain_force"> [('is_dropoff_site', '=', True)]</field>
+        <field
+            name="groups"
+            eval="[(4, ref('shopinvader_api_delivery_pickup.shopinvader_delivery_pickup_user_group'))]"
+        />
+    </record>
+
     <record model="ir.model.access" id="shopinvader_delivery_pickup_access_view">
         <field name="name">delivery.pickup shopinvader user read access</field>
         <field name="model_id" ref="delivery_dropoff_site.model_dropoff_site" />
