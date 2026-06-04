@@ -1,1 +1,1 @@
-httpx  # For FastAPI tests
+httpx2  # For FastAPI tests
