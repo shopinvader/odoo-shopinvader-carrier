@@ -1,107 +1,114 @@
 # Copyright 2019 ACSONE SA/NV
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
+from contextlib import contextmanager
+from unittest.mock import patch
 
 from odoo.tests.common import tagged
 
+from ..routers import delivery_pickup_router
 from .common import TestShopinvaderDeliveryPickupCommon
 
 
 @tagged("post_install", "-at_install")
 class TestDeliveryPickup(TestShopinvaderDeliveryPickupCommon):
-    def _assertExpectedPickupSites(self, search_result, dropoff_sites):
-        self.assertEqual(len(search_result), len(dropoff_sites))
-        pickup_ids = [r["id"] for r in search_result]
-        self.assertSetEqual(set(dropoff_sites.ids), set(pickup_ids))
-
-    def _delivery_pickup_search(self, domain):
-        return self.env["dropoff.site"].search(domain)
-
-    def test_01(self):
-        """
-        Data:
-            * 2 delivery methods (poste, free)
-            * 2 dropoff_site defined for delivery la poste
-        Test Case:
-            * search delivery_pickup without parameters
-        Expected result:
-            * 2 pickup sites found
-        :return:
-        """
-        domain = [("carrier_id", "in", self.cart.shopinvader_available_carrier_ids.ids)]
-        res = self._delivery_pickup_search(domain)
-        self._assertExpectedPickupSites(
-            res, self.pickup_site_foo | self.pickup_site_bar
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.pickup_site_paris = cls.env["dropoff.site"].create(
+            {
+                "name": "paris",
+                "carrier_id": cls.poste_carrier.id,
+                "country_id": cls.env.ref("base.fr").id,
+                "city": "Paris",
+                "zip": "75000",
+                "code": "PARIS",
+                "partner_latitude": 48.8575,
+                "partner_longitude": 2.3514,
+            }
+        )
+        cls.pickup_site_lyon = cls.env["dropoff.site"].create(
+            {
+                "name": "lyon",
+                "carrier_id": cls.poste_carrier.id,
+                "country_id": cls.env.ref("base.fr").id,
+                "city": "Paris",
+                "zip": "75000",
+                "code": "LYON",
+                "partner_latitude": 45.7640,
+                "partner_longitude": 4.8357,
+            }
         )
 
-    def test_02(self):
-        """
-        Data:
-            * cart without delivery method
-            * 2 dropoff_site defined for delivery la poste
-        Test Case:
-            * search delivery_pickup without parameters
-        Expected result:
-            * No site found
-        :return:
-        """
-        self._set_carrier(carrier_id=False)
-        domain = [("carrier_id", "=", False)]
-        res = self._delivery_pickup_search(domain)
-        self._assertExpectedPickupSites(res, self.env["dropoff.site"].browse())
+    @contextmanager
+    def _mock_geocoder(self):
+        def mock_geocode(address, **_kwargs):
+            return {
+                "Rue de la Paix, 69000 Lyon, FR": (45.6626433, 4.5620656),
+                "Rue de la Résistance, 75000 Paris, FR": (49.2568916, 2.4776642),
+                "Rue de la République, 69100 Villeurbanne, FR": (45.7733573, 4.8868454),
+            }.get(address)
 
-    def test_03(self):
-        """
-        Data:
-            * cart without delivery method
-            * 2 dropoff_site defined for delivery la poste
-        Test Case:
-            * search delivery_pickup for carrier la poste
-        Expected result:
-            * No site found
-        :return:
-        """
-        self._set_carrier(carrier_id=False)
-        domain = [("carrier_id", "=", self.poste_carrier.id)]
-        res = self._delivery_pickup_search(domain)
-        self._assertExpectedPickupSites(res, self.env["dropoff.site"].browse())
+        with patch(
+            "odoo.addons.base_geolocalize.models.base_geocoder.GeoCoder.geo_find",
+            wraps=mock_geocode,
+        ):
+            yield
 
-    def test_04(self):
-        """
-        Data:
-            * 2 delivery methods (poste, free) with dropoff_site
-            * 1 dropoff_site defined for delivery la poste
-            * 1 dropoff_site defined for delivery free
-        Test Case:
-            * search delivery_pickup for carrier la poste
-        Expected result:
-            * The result must contains the pickup site linked to poste
-        :return:
-        """
-        self.pickup_site_bar.carrier_id = self.free_carrier
-        self.pickup_site_foo.carrier_id = self.poste_carrier
-        domain = [("carrier_id", "=", self.poste_carrier.id)]
-        res = self._delivery_pickup_search(domain)
-        self._assertExpectedPickupSites(res, self.pickup_site_foo)
+    def _delivery_pickup_search(self, **params):
+        with self._create_test_client(router=delivery_pickup_router) as test_client:
+            response = test_client.get("/delivery_pickups", params=params)
 
-    def test_05(self):
-        """
-        Data:
-            * 2 delivery methods (poste, free) with dropoff_site
-            * 1 dropoff_site defined for delivery la poste
-            * 1 dropoff_site defined for delivery la free
-        Test Case:
-            * search delivery_pickup for target 'current_cart'
-        Expected result:
-            * The result must contains the 3 pickup sites since the 2 carriers
-            are available on the current cart
-        :return:
-        """
-        self.pickup_site_bar.carrier_id = self.free_carrier
-        self.pickup_site_foo.carrier_id = self.poste_carrier
-        self._set_carrier(carrier_id=self.poste_carrier.id)
-        domain = [("carrier_id", "in", self.cart.shopinvader_available_carrier_ids.ids)]
-        res = self._delivery_pickup_search(domain)
-        self._assertExpectedPickupSites(
-            res, self.pickup_site_foo | self.pickup_site_bar
+        self.assertEqual(response.status_code, 200, response.text)
+        return response.json()
+
+    def test_exact(self):
+        with self._mock_geocoder():
+            res = self._delivery_pickup_search(
+                country="FR",
+                zip="69000",
+                city="Lyon",
+                street="Rue de la Paix",
+            )
+        self.assertEqual(
+            [ds["code"] for ds in res],
+            (self.pickup_site_lyon | self.pickup_site_paris).mapped("code"),
         )
+
+    def test_near(self):
+        with self._mock_geocoder():
+            res = self._delivery_pickup_search(
+                carrier_id=self.poste_carrier.id,
+                country="FR",
+                zip="69100",
+                city="Villeurbanne",
+                street="Rue de la République",
+            )
+        self.assertEqual(
+            [ds["code"] for ds in res],
+            (self.pickup_site_lyon | self.pickup_site_paris).mapped("code"),
+        )
+
+    def test_exact_order(self):
+        with self._mock_geocoder():
+            res = self._delivery_pickup_search(
+                country="FR",
+                zip="75000",
+                city="Paris",
+                street="Rue de la Résistance",
+            )
+        self.assertEqual(
+            [ds["code"] for ds in res],
+            (self.pickup_site_paris | self.pickup_site_lyon).mapped("code"),
+        )
+
+    def test_other_carrier(self):
+        with self._mock_geocoder():
+            res = self._delivery_pickup_search(
+                carrier_id=self.free_carrier.id,
+                country="FR",
+                zip="75000",
+                city="Paris",
+                street="Rue de la Résistance",
+            )
+        self.assertFalse(res)
