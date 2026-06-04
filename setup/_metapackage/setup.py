@@ -9,6 +9,7 @@ setuptools.setup(
     version=version,
     install_requires=[
         'odoo-addon-shopinvader_api_delivery_carrier>=16.0dev,<16.1dev',
+        'odoo-addon-shopinvader_api_delivery_pickup>=16.0dev,<16.1dev',
         'odoo-addon-shopinvader_delivery_carrier>=16.0dev,<16.1dev',
     ],
     classifiers=[

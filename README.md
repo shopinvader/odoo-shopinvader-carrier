@@ -22,6 +22,7 @@ Available addons
 addon | version | maintainers | summary
 --- | --- | --- | ---
 [shopinvader_api_delivery_carrier](shopinvader_api_delivery_carrier/) | 16.0.1.2.0 |  | Carrier integration for Shopinvader
+[shopinvader_api_delivery_pickup](shopinvader_api_delivery_pickup/) | 16.0.1.0.0 |  | Allows to deliver sale order to pickup site
 [shopinvader_delivery_carrier](shopinvader_delivery_carrier/) | 16.0.1.0.0 |  | ShopInvader logic for delivery carriers.
 
 [//]: # (end addons)
