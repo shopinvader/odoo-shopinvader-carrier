@@ -13,3 +13,9 @@ class SaleLine(sale_line.SaleLine, extends=True):
         res = super().from_sale_order_line(odoo_rec)
         res.qty_delivered = odoo_rec.qty_delivered
         return res
+
+    @classmethod
+    def _get_sale_line_type(cls, odoo_rec) -> str:
+        if odoo_rec.is_delivery:
+            return "delivery"
+        return super()._get_sale_line_type(odoo_rec)
