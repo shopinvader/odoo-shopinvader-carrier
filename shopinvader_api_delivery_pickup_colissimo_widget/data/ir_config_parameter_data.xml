@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo noupdate="1">
+
+    <!-- Login for Laposte Account -->
+    <record id="laposte_account_user" model="ir.config_parameter">
+        <field name="key">laposte.user</field>
+        <field name="value" />
+    </record>
+    <!-- Password for Laposte Account -->
+    <record id="laposte_account_password" model="ir.config_parameter">
+        <field name="key">laposte.password</field>
+        <field name="value" />
+    </record>
+
+</odoo>
