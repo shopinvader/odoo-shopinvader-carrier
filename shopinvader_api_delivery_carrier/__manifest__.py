@@ -37,6 +37,8 @@
     ],
     "data": [
         "security/groups.xml",
+        "security/acl_account_fiscal_position.xml",
+        "security/acl_account_fiscal_position_tax.xml",
         "security/acl_delivery_carrier.xml",
         "security/acl_choose_delivery_carrier.xml",
         "security/acl_product_pricelist_item.xml",
