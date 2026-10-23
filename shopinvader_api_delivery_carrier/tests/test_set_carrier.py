@@ -53,6 +53,13 @@ class TestSetCarrier(TestShopinvaderDeliveryCarrierCommon):
             info["delivery"]["selected_carrier"]["code"], self.free_carrier.code
         )
 
+        self.assertEqual(
+            info["lines"][0]["type"], "product", "First line should be product"
+        )
+        self.assertEqual(
+            info["lines"][1]["type"], "delivery", "Second line should be delivery"
+        )
+
     def test_setting_poste_carrier(self):
         with self._create_test_client(
             router=delivery_carrier_cart_router
@@ -102,4 +109,11 @@ class TestSetCarrier(TestShopinvaderDeliveryCarrierCommon):
         )
         self.assertEqual(
             info["delivery"]["selected_carrier"]["code"], self.poste_carrier.code
+        )
+
+        self.assertEqual(
+            info["lines"][0]["type"], "product", "First line should be product"
+        )
+        self.assertEqual(
+            info["lines"][1]["type"], "delivery", "Second line should be delivery"
         )
