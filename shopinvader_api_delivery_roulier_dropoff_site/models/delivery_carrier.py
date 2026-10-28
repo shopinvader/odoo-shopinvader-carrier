@@ -93,7 +93,7 @@ class DeliveryCarrier(models.Model):
         code = get["code"]
         if "__" in get["code"]:
             # If the code contains a zone, we need to split it to get the
-            # pickup site id.
+            # dropoff site id.
             get["code"], get["zone"] = get["code"].split("__")
 
         get["id"] = get["code"].replace("roulier_", "")
@@ -106,7 +106,7 @@ class DeliveryCarrier(models.Model):
 
         site = ret.get("site")
         if not site:
-            raise UserError(self.env._("Invalid pickup site"))
+            raise UserError(self.env._("Invalid dropoff site"))
 
         vals = {
             "code": code,
@@ -121,12 +121,12 @@ class DeliveryCarrier(models.Model):
             "partner_latitude": site.get("lat"),
             "partner_longitude": site.get("lng"),
         }
-        pickup_site = self.env["dropoff.site"].search(
+        dropoff_site = self.env["dropoff.site"].search(
             [("code", "=", code), ("carrier_id", "=", self.id)], limit=1
         )
-        if pickup_site:
-            pickup_site.sudo().write(vals)
+        if dropoff_site:
+            dropoff_site.sudo().write(vals)
         else:
-            pickup_site = self.env["dropoff.site"].sudo().create(vals)
-        pickup_site.flush()
-        return pickup_site
+            dropoff_site = self.env["dropoff.site"].sudo().create(vals)
+        dropoff_site.flush()
+        return dropoff_site

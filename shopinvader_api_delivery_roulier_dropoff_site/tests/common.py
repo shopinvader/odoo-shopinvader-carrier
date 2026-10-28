@@ -4,7 +4,7 @@
 
 import datetime
 
-pickup_sites = {
+dropoff_sites = {
     "quality": 2,
     "sites": [
         {

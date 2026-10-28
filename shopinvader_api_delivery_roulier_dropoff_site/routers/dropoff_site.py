@@ -15,8 +15,8 @@ except ImportError:
     _logger.debug("Cannot `import roulier`.")
 
 
-class DeliveryPickupHelper(VirtualModel):
-    _inherit = "shopinvader_api_delivery_pickup.delivery_pickup_router.helper"
+class DropoffSiteHelper(VirtualModel):
+    _inherit = "shopinvader_api_delivery_dropoff_site.router.helper"
 
     def _available_roulier_carriers(self, cart):
         if cart:

@@ -9,19 +9,19 @@ from roulier import roulier
 from odoo.addons.delivery_roulier.tests.common import (
     DeliveryRoulierCommonCase,
 )
-from odoo.addons.shopinvader_api_delivery_pickup.tests.common import (
-    TestShopinvaderDeliveryPickupCommon,
+from odoo.addons.shopinvader_api_delivery_dropoff_site.tests.common import (
+    TestShopinvaderDeliveryDropoffSiteCommon,
 )
 
-from .common import pickup_sites
+from .common import dropoff_sites
 
 
-class TestDeliveryRoulierPickup(
-    TestShopinvaderDeliveryPickupCommon, DeliveryRoulierCommonCase
+class TestDeliveryRoulierDropoffSite(
+    TestShopinvaderDeliveryDropoffSiteCommon, DeliveryRoulierCommonCase
 ):
     def setUp(self):
         super().setUp()
-        self.pickup_carrier.delivery_type = "test"
+        self.dropoff_site_carrier.delivery_type = "test"
         self.carrier_account = self.env["carrier.account"].create(
             {
                 "name": "Test Carrier",
@@ -30,17 +30,17 @@ class TestDeliveryRoulierPickup(
                 "password": "",
             }
         )
-        self.pickup_carrier.carrier_account_id = self.carrier_account
+        self.dropoff_site_carrier.carrier_account_id = self.carrier_account
 
-    def test_delivery_pickup_roulier(self):
+    def test_delivery_roulier_dropoff_site(self):
         roulier.get_carriers_action_available = MagicMock(
             return_value={"test": ["search_pickup_sites"]}
         )
 
         with patch("roulier.roulier.get") as mock_roulier, self._mock_geocoder():
-            mock_roulier.return_value = pickup_sites
+            mock_roulier.return_value = dropoff_sites
 
-            res = self._delivery_pickup_search(
+            res = self._dropoff_site_search(
                 country="FR",
                 zip="69000",
                 city="Lyon",

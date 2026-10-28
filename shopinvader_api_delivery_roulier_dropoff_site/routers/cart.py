@@ -13,7 +13,7 @@ class CartHelper(VirtualModel):
     _inherit = "shopinvader_api_cart.cart_router.helper"
 
     @api.model
-    def _set_delivery_pickup(self, cart, data):
+    def _set_dropoff_site(self, cart, data):
         if data.code.startswith("roulier_"):
             # If the code is a Roulier pickup site, we need to upsert it
             # in the database to get its ID.
@@ -22,4 +22,4 @@ class CartHelper(VirtualModel):
                 raise UserError(self.env._("Carrier not found"))
             carrier._roulier_upsert_pickup_site(data.model_dump())
 
-        return super()._set_delivery_pickup(cart, data)
+        return super()._set_dropoff_site(cart, data)

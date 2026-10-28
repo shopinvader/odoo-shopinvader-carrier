@@ -3,8 +3,8 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 {
-    "name": "Shopinvader API Delivery Pickup Roulier",
-    "summary": "Integrate Roulier pickup sites in Shopinvader",
+    "name": "Shopinvader API Delivery Roulier Dropoff Site",
+    "summary": "Integrate Roulier dropoff sites in Shopinvader",
     "version": "18.0.1.0.0",
     "category": "e-commerce",
     "website": "https://github.com/shopinvader/odoo-shopinvader-carrier",
@@ -13,6 +13,6 @@
     "license": "AGPL-3",
     "installable": True,
     "external_dependencies": {"python": ["roulier"]},
-    "depends": ["shopinvader_api_delivery_pickup", "delivery_roulier"],
+    "depends": ["shopinvader_api_delivery_dropoff_site", "delivery_roulier"],
     "data": [],
 }
