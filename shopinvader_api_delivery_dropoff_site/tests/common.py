@@ -14,10 +14,10 @@ from odoo.addons.shopinvader_api_delivery_carrier.tests.common import (
     TestShopinvaderDeliveryCarrierCommon,
 )
 
-from ..routers import delivery_pickup_router
+from ..routers import dropoff_site_router
 
 
-class TestShopinvaderDeliveryPickupCommon(TestShopinvaderDeliveryCarrierCommon):
+class TestShopinvaderDeliveryDropoffSiteCommon(TestShopinvaderDeliveryCarrierCommon):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -27,15 +27,15 @@ class TestShopinvaderDeliveryPickupCommon(TestShopinvaderDeliveryCarrierCommon):
                 0,
                 [
                     cls.env.ref(
-                        "shopinvader_api_delivery_pickup.shopinvader_delivery_pickup_user_group"
+                        "shopinvader_api_delivery_dropoff_site.shopinvader_delivery_dropoff_site_user_group"
                     ).id,
                 ],
             )
         ]
-        cls.pickup_carrier = cls.env.ref("delivery_dropoff_site.delivery_carrier")
+        cls.dropoff_site_carrier = cls.env.ref("delivery_dropoff_site.delivery_carrier")
         cls.poste_carrier.with_dropoff_site = True
         cls.cart.carrier_id = cls.poste_carrier.id
-        cls.pickup_site_foo = cls.env["dropoff.site"].create(
+        cls.dropoff_site_foo = cls.env["dropoff.site"].create(
             {
                 "ref": "foo",
                 "name": "Foo",
@@ -43,7 +43,7 @@ class TestShopinvaderDeliveryPickupCommon(TestShopinvaderDeliveryCarrierCommon):
                 "code": "FOO",
             }
         )
-        cls.pickup_site_bar = cls.env["dropoff.site"].create(
+        cls.dropoff_site_bar = cls.env["dropoff.site"].create(
             {
                 "ref": "bar",
                 "name": "Bar",
@@ -51,7 +51,7 @@ class TestShopinvaderDeliveryPickupCommon(TestShopinvaderDeliveryCarrierCommon):
                 "code": "BAR",
             }
         )
-        cls.cart.partner_shipping_id = cls.pickup_site_foo.partner_id.id
+        cls.cart.partner_shipping_id = cls.dropoff_site_foo.partner_id.id
         cls.cart._onchange_partner_shipping_id()
         cls.final_partner = cls.cart.partner_shipping_id
 
@@ -83,9 +83,9 @@ class TestShopinvaderDeliveryPickupCommon(TestShopinvaderDeliveryCarrierCommon):
         ):
             yield
 
-    def _delivery_pickup_search(self, **params):
-        with self._create_test_client(router=delivery_pickup_router) as test_client:
-            response = test_client.get("/delivery_pickups", params=params)
+    def _dropoff_site_search(self, **params):
+        with self._create_test_client(router=dropoff_site_router) as test_client:
+            response = test_client.get("/dropoff_sites", params=params)
 
         self.assertEqual(response.status_code, 200, response.text)
         return response.json()

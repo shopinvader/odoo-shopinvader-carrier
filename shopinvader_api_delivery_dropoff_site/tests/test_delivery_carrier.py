@@ -5,10 +5,10 @@ from requests import Response
 
 from odoo.addons.shopinvader_api_delivery_carrier.routers import delivery_carrier_router
 
-from .common import TestShopinvaderDeliveryPickupCommon
+from .common import TestShopinvaderDeliveryDropoffSiteCommon
 
 
-class TestDeliveryCarrier(TestShopinvaderDeliveryPickupCommon):
+class TestDeliveryCarrier(TestShopinvaderDeliveryDropoffSiteCommon):
     def test_search_all(self):
         with self._create_test_client(router=delivery_carrier_router) as test_client:
             response: Response = test_client.get("/delivery_carriers")
@@ -37,10 +37,10 @@ class TestDeliveryCarrier(TestShopinvaderDeliveryPickupCommon):
                 "with_dropoff_site": None,
             },
             {
-                "id": self.pickup_carrier.id,
-                "name": self.pickup_carrier.name,
-                "code": self.pickup_carrier.code or None,
-                "description": self.pickup_carrier.carrier_description or None,
+                "id": self.dropoff_site_carrier.id,
+                "name": self.dropoff_site_carrier.name,
+                "code": self.dropoff_site_carrier.code or None,
+                "description": self.dropoff_site_carrier.carrier_description or None,
                 "with_dropoff_site": True,
             },
         ]

@@ -15,18 +15,18 @@ from odoo.addons.shopinvader_api_cart.schemas import CartTransaction
 from odoo.addons.shopinvader_router_helper import VirtualModel
 from odoo.addons.shopinvader_schema_sale.schemas import Sale
 
-from ..schemas import DeliveryPickupInput
+from ..schemas import DropoffSiteInput
 
-delivery_pickup_cart_router = APIRouter(tags=["carts"])
+dropoff_site_cart_router = APIRouter(tags=["carts"])
 
 
 class CartHelper(VirtualModel):
     _inherit = "shopinvader_api_cart.cart_router.helper"
 
-    # Set delivery pickup
+    # Set dropoff site
     @api.model
-    def _set_delivery_pickup(self, cart, data):
-        pickup_site = (
+    def _set_dropoff_site(self, cart, data):
+        dropoff_site = (
             self.env["dropoff.site"]
             .sudo()
             .search(
@@ -34,20 +34,20 @@ class CartHelper(VirtualModel):
                 limit=1,
             )
         )
-        if not pickup_site:
-            raise UserError(self.env._("Invalid code for pickup site"))
-        if pickup_site.carrier_id not in cart.shopinvader_available_carrier_ids:
+        if not dropoff_site:
+            raise UserError(self.env._("Invalid code for dropoff site"))
+        if dropoff_site.carrier_id not in cart.shopinvader_available_carrier_ids:
             raise UserError(
                 self.env._("This delivery method is not available for your order")
             )
-        self._set_carrier_and_price(cart, pickup_site.carrier_id.id)
-        vals = {"partner_shipping_id": pickup_site.partner_id.id}
+        self._set_carrier_and_price(cart, dropoff_site.carrier_id.id)
+        vals = {"partner_shipping_id": dropoff_site.partner_id.id}
         if not cart.final_shipping_partner_id:
             vals["final_shipping_partner_id"] = cart.partner_shipping_id.id
         cart.sudo().write(vals)
 
     @api.model
-    def _reset_delivery_pickup(self, cart):
+    def _reset_dropoff_site(self, cart):
         cart = cart.sudo()
         if cart.final_shipping_partner_id:
             cart.partner_shipping_id = cart.final_shipping_partner_id
@@ -55,7 +55,7 @@ class CartHelper(VirtualModel):
 
     @api.model
     def _set_carrier(self, cart, data):
-        self._reset_delivery_pickup(cart)
+        self._reset_dropoff_site(cart)
         return super()._set_carrier(cart, data)
 
     @api.model
@@ -67,23 +67,23 @@ class CartHelper(VirtualModel):
     ):
         cart = super()._sync_cart(cart, uuid, transactions)
         if transactions:
-            self._reset_delivery_pickup(cart)
+            self._reset_dropoff_site(cart)
         return cart
 
 
-@delivery_pickup_cart_router.post("/set_pickup")
-@delivery_pickup_cart_router.post("/{uuid}/set_pickup")
-@delivery_pickup_cart_router.post("/current/set_pickup")
-def set_delivery_pickup(
+@dropoff_site_cart_router.post("/set_dropoff_site")
+@dropoff_site_cart_router.post("/{uuid}/set_dropoff_site")
+@dropoff_site_cart_router.post("/current/set_dropoff_site")
+def set_dropoff_site(
     helper: Annotated[CartHelper, Depends(cart_helper)],
-    data: DeliveryPickupInput,
+    data: DropoffSiteInput,
     uuid: str | None = None,
 ) -> Sale | None:
     """
-    If cart is found, set the pickup site on it.
+    If cart is found, set the dropoff site on it.
     """
     cart = helper._get_cart(uuid)
     if not cart:
         raise UserError(helper.env._("There is no cart"))
-    helper._set_delivery_pickup(cart, data)
+    helper._set_dropoff_site(cart, data)
     return Sale.from_sale_order(cart) if cart else None

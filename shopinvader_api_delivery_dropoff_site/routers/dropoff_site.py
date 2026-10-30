@@ -10,7 +10,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from odoo import api, fields
 
 from odoo.addons.base.models.res_partner import Partner as ResPartner
-from odoo.addons.delivery_dropoff_site.models.dropoff_site import DropoffSite
+from odoo.addons.delivery_dropoff_site.models.dropoff_site import (
+    DropoffSite as DropoffSiteModel,
+)
 from odoo.addons.fastapi.dependencies import (
     authenticated_partner,
     authenticated_partner_env,
@@ -18,16 +20,16 @@ from odoo.addons.fastapi.dependencies import (
 from odoo.addons.shopinvader_api_cart.routers.cart import CartHelper, cart_helper
 from odoo.addons.shopinvader_router_helper import VirtualModel
 
-from ..schemas import DeliveryPickup, DeliveryPickupSearch
-from .cart import delivery_pickup_cart_router
+from ..schemas import DropoffSite, DropoffSiteSearch
+from .cart import dropoff_site_cart_router
 
-delivery_pickup_router = APIRouter(tags=["delivery_pickups"])
+dropoff_site_router = APIRouter(tags=["dropoff_sites"])
 
 
-class DeliveryPickupHelper(VirtualModel):
+class DropoffSiteHelper(VirtualModel):
     _inherit = "shopinvader_api_delivery_carrier.delivery_carrier_router.helper"
-    _name = "shopinvader_api_delivery_pickup.delivery_pickup_router.helper"
-    _description = "ShopInvader API Delivery Pickup Router Helper"
+    _name = "shopinvader_api_delivery_dropoff_site.router.helper"
+    _description = "Shopinvader API Delivery Dropoff Site Router Helper"
     _model = "dropoff.site"
 
     partner = fields.Many2one("res.partner")
@@ -38,9 +40,9 @@ class DeliveryPickupHelper(VirtualModel):
             ("partner_longitude", "!=", 0),
         ]
 
-    def _search(self, data, cart=None, limit=10) -> DropoffSite:
+    def _search(self, data, cart=None, limit=10) -> DropoffSiteModel:
         """
-        Search for delivery pickup sites
+        Search for dropoff sites
         :return: a list of dropoff.site
         """
         if cart:
@@ -86,55 +88,54 @@ class DeliveryPickupHelper(VirtualModel):
         return dropoff_sites
 
 
-def delivery_pickup_helper(
+def dropoff_site_helper(
     env: Annotated[api.Environment, Depends(authenticated_partner_env)],
     partner: Annotated[ResPartner, Depends(authenticated_partner)],
 ):
-    return env["shopinvader_api_delivery_pickup.delivery_pickup_router.helper"].new(
+    return env["shopinvader_api_delivery_dropoff_site.router.helper"].new(
         {"partner": partner}
     )
 
 
-@delivery_pickup_router.get("/delivery_pickups")
+@dropoff_site_router.get("/dropoff_sites")
 def search(
-    data: Annotated[DeliveryPickupSearch, Depends()],
-    helper: Annotated[DeliveryPickupHelper, Depends(delivery_pickup_helper)],
-) -> list[DeliveryPickup]:
+    data: Annotated[DropoffSiteSearch, Depends()],
+    helper: Annotated[DropoffSiteHelper, Depends(dropoff_site_helper)],
+) -> list[DropoffSite]:
     """
-    Returns the list of all available pickup sites.
+    Returns the list of all available dropoff sites.
 
     If you don't provide a carrier_id, the service will return all the
-    pickup sites linked to carriers available for this site.
+    dropoff sites linked to carriers available for this site.
 
-    If you provide a carrier_id, only the pickup sites linked to the given
+    If you provide a carrier_id, only the dropoff sites linked to the given
     carrier are returned except if the carrier is not available for this
     site.
     """
-    delivery_pickups = helper._search(data, None)
+    dropoff_sites = helper._search(data, None)
     return [
-        DeliveryPickup.from_delivery_pickup(delivery_pickup)
-        for delivery_pickup in delivery_pickups
+        DropoffSite.from_dropoff_site(dropoff_site) for dropoff_site in dropoff_sites
     ]
 
 
-@delivery_pickup_cart_router.get("/{uuid}/delivery_pickups")
-@delivery_pickup_cart_router.get("/current/delivery_pickups")
+@dropoff_site_cart_router.get("/{uuid}/dropoff_sites")
+@dropoff_site_cart_router.get("/current/dropoff_sites")
 def search_current(
-    helper: Annotated[DeliveryPickupHelper, Depends(delivery_pickup_helper)],
+    helper: Annotated[DropoffSiteHelper, Depends(dropoff_site_helper)],
     cart_helper: Annotated[CartHelper, Depends(cart_helper)],
-    data: Annotated[DeliveryPickupSearch, Depends()],
+    data: Annotated[DropoffSiteSearch, Depends()],
     uuid: str | None = None,
-) -> list[DeliveryPickup]:
+) -> list[DropoffSite]:
     """
-    Returns the list of available pickup sites.
+    Returns the list of available dropoff sites.
 
-    The list will be limited to the pickup sites linked to carriers applying
+    The list will be limited to the dropoff sites linked to carriers applying
     to the current cart.
 
     If you don't provide a carrier_id, the service will return all the
-    pickup sites linked to carriers available for this site.
+    dropoff sites linked to carriers available for this site.
 
-    If you provide a carrier_id, only the pickup sites linked to the given
+    If you provide a carrier_id, only the dropoff sites linked to the given
     carrier are returned except if the carrier is not available for this
     site.
     """
@@ -142,8 +143,7 @@ def search_current(
     if not cart:
         raise HTTPException(status_code=404)
 
-    delivery_pickups = helper._search(data, cart)
+    dropoff_sites = helper._search(data, cart)
     return [
-        DeliveryPickup.from_delivery_pickup(delivery_pickup)
-        for delivery_pickup in delivery_pickups
+        DropoffSite.from_dropoff_site(dropoff_site) for dropoff_site in dropoff_sites
     ]

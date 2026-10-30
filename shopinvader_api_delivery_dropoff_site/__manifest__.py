@@ -3,8 +3,8 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 {
-    "name": "Shopinvader Delivery Pickup",
-    "summary": "Allows to deliver sale order to pickup site",
+    "name": "Shopinvader API Delivery Dropoff Site",
+    "summary": "Allows to deliver sale order to dropoff site",
     "version": "18.0.1.0.0",
     "category": "e-commerce",
     "website": "https://github.com/shopinvader/odoo-shopinvader-carrier",
@@ -18,6 +18,6 @@
     ],
     "data": [
         "security/groups.xml",
-        "security/ir_rule+acl_delivery_pickup.xml",
+        "security/ir_rule+acl_delivery_dropoff_site.xml",
     ],
 }

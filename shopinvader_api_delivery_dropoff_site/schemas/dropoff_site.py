@@ -8,12 +8,12 @@ from extendable_pydantic import StrictExtendableBaseModel
 from ..schemas import ResourceCalendarAttendance
 
 
-class DeliveryPickupInput(StrictExtendableBaseModel):
+class DropoffSiteInput(StrictExtendableBaseModel):
     carrier_id: int
     code: str
 
 
-class DeliveryPickupSearch(StrictExtendableBaseModel):
+class DropoffSiteSearch(StrictExtendableBaseModel):
     carrier_id: int | None = None
     country: str
     zip: str
@@ -21,7 +21,7 @@ class DeliveryPickupSearch(StrictExtendableBaseModel):
     street: str
 
 
-class DeliveryPickup(StrictExtendableBaseModel):
+class DropoffSite(StrictExtendableBaseModel):
     carrier_id: int
     code: str
     name: str
@@ -38,7 +38,7 @@ class DeliveryPickup(StrictExtendableBaseModel):
     lng: float | None = None
 
     @classmethod
-    def from_delivery_pickup(cls, odoo_rec):
+    def from_dropoff_site(cls, odoo_rec):
         return cls.model_construct(
             carrier_id=odoo_rec.carrier_id.id,
             code=odoo_rec.code,
